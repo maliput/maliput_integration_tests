@@ -5,10 +5,10 @@
 
 #include <gtest/gtest.h>
 
-#include "dragway_test_utilities/fixtures.h"
 #include "maliput/api/lane.h"
 #include "maliput/api/lane_data.h"
 #include "maliput/api/regions.h"
+#include "maliput_dragway_test_utilities/fixtures.h"
 #include "multilane_test_utilities/fixtures.h"
 
 namespace maliput {

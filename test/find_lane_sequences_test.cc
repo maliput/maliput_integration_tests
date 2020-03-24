@@ -7,10 +7,10 @@
 
 #include <gtest/gtest.h>
 
-#include "dragway_test_utilities/fixtures.h"
 #include "maliput/api/lane.h"
 #include "maliput/api/road_geometry.h"
 #include "maliput/common/filesystem.h"
+#include "maliput_dragway_test_utilities/fixtures.h"
 #include "multilane/builder.h"
 #include "multilane/loader.h"
 #include "multilane_test_utilities/fixtures.h"

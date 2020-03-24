@@ -13,8 +13,8 @@
   <depend>drake_vendor</depend>
   <depend>fmt</depend>
   <depend>maliput</depend>
+  <depend>maliput_dragway</depend>
   <depend>multilane</depend>
-  <depend>dragway</depend>
 
   <export>
     <build_type>ament_cmake</build_type>

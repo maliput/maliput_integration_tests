@@ -3,14 +3,12 @@ find_package(ament_cmake_gtest REQUIRED)
 macro(add_dependencies_to_test target)
     if (TARGET ${target})
       ament_target_dependencies(${target}
-        "dragway"
         "drake"
         "maliput"
+        "maliput_dragway"
         "multilane"
       )
       target_link_libraries(${target}
-        dragway::dragway
-        dragway::dragway_test_utilities
         drake::drake
         fmt::fmt
         maliput::api
@@ -19,6 +17,8 @@ macro(add_dependencies_to_test target)
         maliput::maliput_test_utilities
         maliput::routing
         maliput::utilities
+        maliput_dragway::maliput_dragway
+        maliput_dragway::maliput_dragway_test_utilities
         multilane::multilane
         multilane::multilane_test_utilities)
     endif()
