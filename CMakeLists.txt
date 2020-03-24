@@ -18,7 +18,7 @@ find_package(drake_vendor REQUIRED)
 find_package(fmt 4.0.0 EXACT REQUIRED)
 find_package(maliput REQUIRED)
 find_package(maliput_dragway REQUIRED)
-find_package(multilane REQUIRED)
+find_package(maliput_multilane REQUIRED)
 
 ##############################################################################
 # Tests

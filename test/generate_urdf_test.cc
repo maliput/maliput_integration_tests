@@ -5,8 +5,8 @@
 #include <gtest/gtest.h>
 
 #include "maliput/common/filesystem.h"
-#include "multilane/builder.h"
-#include "multilane/loader.h"
+#include "maliput_multilane/builder.h"
+#include "maliput_multilane/loader.h"
 
 namespace maliput {
 namespace utility {

@@ -14,7 +14,7 @@
   <depend>fmt</depend>
   <depend>maliput</depend>
   <depend>maliput_dragway</depend>
-  <depend>multilane</depend>
+  <depend>maliput_multilane</depend>
 
   <export>
     <build_type>ament_cmake</build_type>

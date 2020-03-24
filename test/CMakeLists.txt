@@ -6,7 +6,7 @@ macro(add_dependencies_to_test target)
         "drake"
         "maliput"
         "maliput_dragway"
-        "multilane"
+        "maliput_multilane"
       )
       target_link_libraries(${target}
         drake::drake
@@ -19,8 +19,8 @@ macro(add_dependencies_to_test target)
         maliput::utilities
         maliput_dragway::maliput_dragway
         maliput_dragway::maliput_dragway_test_utilities
-        multilane::multilane
-        multilane::multilane_test_utilities)
+        maliput_multilane::maliput_multilane
+        maliput_multilane::maliput_multilane_test_utilities)
     endif()
 endmacro()
 
