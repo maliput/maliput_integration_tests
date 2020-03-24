@@ -28,7 +28,7 @@ if (BUILD_TESTING)
   find_package(ament_cmake_clang_format REQUIRED)
   enable_testing()
   add_subdirectory(test)
-  ament_clang_format(CONFIG_FILE ${CMAKE_CURRENT_SOURCE_DIR}/../.clang-format)
+  ament_clang_format(CONFIG_FILE ${CMAKE_CURRENT_SOURCE_DIR}/.clang-format)
 endif()
 
 ##############################################################################
