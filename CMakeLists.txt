@@ -42,7 +42,7 @@ endif()
 if(BUILD_DOCS)
   find_package(ament_cmake_doxygen REQUIRED)
   ament_doxygen_generate(doxygen_maliput_integration_tests
-    DEPENDENCIES maliput maliput_dragway multilane)
+    DEPENDENCIES maliput maliput_dragway maliput_multilane)
 endif()
 
 ament_package()
