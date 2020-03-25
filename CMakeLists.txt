@@ -18,7 +18,7 @@ find_package(drake_vendor REQUIRED)
 find_package(fmt 4.0.0 EXACT REQUIRED)
 find_package(maliput REQUIRED)
 find_package(maliput_dragway REQUIRED)
-find_package(multilane REQUIRED)
+find_package(maliput_multilane REQUIRED)
 
 ##############################################################################
 # Tests
@@ -42,7 +42,7 @@ endif()
 if(BUILD_DOCS)
   find_package(ament_cmake_doxygen REQUIRED)
   ament_doxygen_generate(doxygen_maliput_integration_tests
-    DEPENDENCIES maliput maliput_dragway multilane)
+    DEPENDENCIES maliput maliput_dragway maliput_multilane)
 endif()
 
 ament_package()

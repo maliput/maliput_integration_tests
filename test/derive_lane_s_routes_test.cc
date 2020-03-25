@@ -9,7 +9,7 @@
 #include "maliput/api/lane_data.h"
 #include "maliput/api/regions.h"
 #include "maliput_dragway_test_utilities/fixtures.h"
-#include "multilane_test_utilities/fixtures.h"
+#include "maliput_multilane_test_utilities/fixtures.h"
 
 namespace maliput {
 namespace routing {

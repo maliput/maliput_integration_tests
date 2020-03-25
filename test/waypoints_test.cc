@@ -11,8 +11,8 @@
 #include "maliput/common/assertion_error.h"
 #include "maliput/common/filesystem.h"
 #include "maliput/test_utilities/maliput_types_compare.h"
-#include "multilane/builder.h"
-#include "multilane/loader.h"
+#include "maliput_multilane/builder.h"
+#include "maliput_multilane/loader.h"
 
 namespace maliput {
 namespace {
