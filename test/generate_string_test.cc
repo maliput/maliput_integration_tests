@@ -22,7 +22,7 @@ class GenerateStringTest : public ::testing::Test {
     const std::string env_path = maliput::common::Filesystem::get_env_path(MULTILANE_RESOURCE_VAR);
     EXPECT_TRUE(!env_path.empty());
     filepath_ = env_path + kFileName;
-    road_geometry_ = std::move(multilane::LoadFile(multilane::BuilderFactory(), filepath_));
+    road_geometry_ = multilane::LoadFile(multilane::BuilderFactory(), filepath_);
   }
 
   // Spot checks @p s for the existence of various details based on options_.
