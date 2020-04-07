@@ -246,7 +246,7 @@ class TestLoading2x2IntersectionRules : public ::testing::Test {
     // Compare values.
     EXPECT_DOUBLE_EQ(vehicle_stop_in_zone_discrete_rule.zone().length(), right_of_way_rule.zone().length());
     EXPECT_EQ(vehicle_stop_in_zone_discrete_rule.values().size(), 1);
-    EXPECT_EQ(vehicle_stop_in_zone_discrete_rule.values()[0].severity, {Rule::State::kStrict});
+    EXPECT_EQ(vehicle_stop_in_zone_discrete_rule.values()[0].severity, Rule::State::kStrict);
     EXPECT_TRUE(vehicle_stop_in_zone_discrete_rule.values()[0].related_rules.empty());
     if (right_of_way_rule.zone_type() == RightOfWayRule::ZoneType::kStopExcluded) {
       EXPECT_EQ(vehicle_stop_in_zone_discrete_rule.values()[0].value, "DoNotStop");
