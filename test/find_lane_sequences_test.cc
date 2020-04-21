@@ -115,7 +115,7 @@ TEST_F(LoopBasedTest, FindLaneSequencesTest) {
   const Lane* start_lane = index_.GetLane(LaneId("l:0_0"));
   const Lane* end_lane = index_.GetLane(LaneId("l:4_0"));
   const std::vector<std::vector<const Lane*>> sequences = FindLaneSequences(start_lane, end_lane, kMaxLength);
-  ASSERT_EQ(sequences.size(), 5);
+  ASSERT_EQ(sequences.size(), 5u);
 }
 
 TEST_F(MultiBranchBasedTest, FindLaneSequencesTest) {
@@ -137,7 +137,7 @@ GTEST_TEST(FindLaneSequencesTest, NoRouteToEndLane) {
       maliput::common::Filesystem::get_env_path(MULTILANE_RESOURCE_VAR) + "/dual_non_intersecting_lanes.yaml");
   const Lane* start_lane = road->junction(0)->segment(0)->lane(0);
   const Lane* end_lane = road->junction(1)->segment(0)->lane(0);
-  ASSERT_EQ(FindLaneSequences(start_lane, end_lane, start_lane->length() + end_lane->length()).size(), 0);
+  ASSERT_EQ(FindLaneSequences(start_lane, end_lane, start_lane->length() + end_lane->length()).size(), 0u);
 }
 
 GTEST_TEST(FindLaneSequencesTest, MaxLengthOmitsStartAndEndLanes) {
@@ -148,10 +148,10 @@ GTEST_TEST(FindLaneSequencesTest, MaxLengthOmitsStartAndEndLanes) {
   const Lane* start_lane = index.GetLane(LaneId("l:0_0"));
   const Lane* middle_lane = index.GetLane(LaneId("l:1_0"));
   const Lane* end_lane = index.GetLane(LaneId("l:2_0"));
-  ASSERT_EQ(FindLaneSequences(start_lane, end_lane, middle_lane->length() / 2).size(), 0);
-  ASSERT_EQ(FindLaneSequences(start_lane, end_lane, middle_lane->length()).size(), 1);
+  ASSERT_EQ(FindLaneSequences(start_lane, end_lane, middle_lane->length() / 2).size(), 0u);
+  ASSERT_EQ(FindLaneSequences(start_lane, end_lane, middle_lane->length()).size(), 1u);
   const double total_length = start_lane->length() + middle_lane->length() + end_lane->length();
-  ASSERT_EQ(FindLaneSequences(start_lane, end_lane, total_length).size(), 1);
+  ASSERT_EQ(FindLaneSequences(start_lane, end_lane, total_length).size(), 1u);
 }
 
 }  // namespace routing

@@ -245,7 +245,7 @@ class TestLoading2x2IntersectionRules : public ::testing::Test {
         rulebook->GetDiscreteValueRule(GetRuleIdFrom(VehicleStopInZoneBehaviorRuleTypeId(), right_of_way_rule.id()));
     // Compare values.
     EXPECT_DOUBLE_EQ(vehicle_stop_in_zone_discrete_rule.zone().length(), right_of_way_rule.zone().length());
-    EXPECT_EQ(vehicle_stop_in_zone_discrete_rule.values().size(), 1);
+    EXPECT_EQ(vehicle_stop_in_zone_discrete_rule.values().size(), 1u);
     EXPECT_EQ(vehicle_stop_in_zone_discrete_rule.values()[0].severity, Rule::State::kStrict);
     EXPECT_TRUE(vehicle_stop_in_zone_discrete_rule.values()[0].related_rules.empty());
     if (right_of_way_rule.zone_type() == RightOfWayRule::ZoneType::kStopExcluded) {
@@ -280,7 +280,7 @@ class TestLoading2x2IntersectionRules : public ::testing::Test {
     }
 
     // Check the related unique ids of the discrete value.
-    int related_bulb_group_size{0};
+    unsigned int related_bulb_group_size{0};
     for (const auto& traffic_light_id_vector_bulb_group_id : right_of_way_rule.related_bulb_groups()) {
       related_bulb_group_size += traffic_light_id_vector_bulb_group_id.second.size();
     }

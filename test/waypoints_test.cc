@@ -80,8 +80,8 @@ GTEST_TEST(WaypointsTest, Waypoints) {
                                               GeoPosition(9.0, 0.0, 0.0), GeoPosition(13.0, 0.0, 0.0),
                                               GeoPosition(15.0, 0.0, 0.0)};
 
-  ASSERT_EQ(waypoints.size(), 5);
-  for (int i = 0; i < waypoints.size(); ++i) {
+  ASSERT_EQ(waypoints.size(), 5u);
+  for (unsigned int i = 0; i < waypoints.size(); ++i) {
     EXPECT_TRUE(api::test::IsGeoPositionClose(waypoints[i], expected_waypoints[i], kLinearTolerance));
   }
 
@@ -99,8 +99,8 @@ GTEST_TEST(WaypointsTest, Waypoints) {
       GeoPosition(5.0, 0.0, 0.0),
       GeoPosition(7.0, 0.0, 0.0),
   };
-  ASSERT_EQ(waypoints.size(), 2);
-  for (int i = 0; i < waypoints.size(); ++i) {
+  ASSERT_EQ(waypoints.size(), 2u);
+  for (unsigned int i = 0; i < waypoints.size(); ++i) {
     EXPECT_TRUE(api::test::IsGeoPositionClose(waypoints[i], expected_waypoints[i], kLinearTolerance));
   }
 
@@ -119,8 +119,8 @@ GTEST_TEST(WaypointsTest, Waypoints) {
       GeoPosition(kLinearTolerance, 0.0, 0.0),
   };
   waypoints = rg->SampleAheadWaypoints(route_with_linear_tolerance_lane, step_smaller_than_linear_tolerance);
-  EXPECT_EQ(waypoints.size(), 2);
-  for (int i = 0; i < waypoints.size(); ++i) {
+  EXPECT_EQ(waypoints.size(), 2u);
+  for (unsigned int i = 0; i < waypoints.size(); ++i) {
     EXPECT_TRUE(api::test::IsGeoPositionClose(waypoints[i], expected_waypoints[i], kLinearTolerance));
   }
 };
