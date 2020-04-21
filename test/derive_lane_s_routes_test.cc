@@ -33,8 +33,8 @@ namespace {
 class DragwayBasedRouteTest : public DragwayBasedTest {
  protected:
   void CheckRoutes(const std::vector<LaneSRoute>& routes, const LaneSRange& expected_range) {
-    ASSERT_EQ(routes.size(), 1);
-    ASSERT_EQ(routes.at(0).ranges().size(), 1);
+    ASSERT_EQ(routes.size(), 1u);
+    ASSERT_EQ(routes.at(0).ranges().size(), 1u);
     const LaneSRange& range = routes.at(0).ranges().at(0);
     ASSERT_EQ(range.lane_id(), expected_range.lane_id());
     ASSERT_EQ(range.s_range().s0(), expected_range.s_range().s0());
@@ -82,14 +82,14 @@ TEST_F(DragwayBasedRouteTest, CrossLaneTests) {
   for (const auto& test_case : test_cases) {
     const RoadPosition start(test_case.start_lane, LanePosition(0, 0, 0));
     const RoadPosition end(test_case.end_lane, LanePosition(kLength, 0, 0));
-    ASSERT_EQ(DeriveLaneSRoutes(start, end, kLength).size(), 0);
+    ASSERT_EQ(DeriveLaneSRoutes(start, end, kLength).size(), 0u);
   }
 }
 
 namespace {
 
 void CheckRoutes(const std::vector<LaneSRoute>& routes, const std::vector<LaneSRange>& expected_route) {
-  ASSERT_EQ(routes.size(), 1);
+  ASSERT_EQ(routes.size(), 1u);
   const std::vector<LaneSRange>& ranges = routes.at(0).ranges();
   ASSERT_EQ(ranges.size(), expected_route.size());
   for (size_t i = 0; i < ranges.size(); ++i) {
@@ -144,7 +144,7 @@ TEST_F(BranchAndMergeBasedTest, NoContinuousSPath) {
   const Lane* end_lane = index_.GetLane(LaneId("l:3_1"));
   const RoadPosition start(start_lane, LanePosition(0, 0, 0));
   const RoadPosition end(end_lane, LanePosition(end_lane->length(), 0, 0));
-  ASSERT_EQ(DeriveLaneSRoutes(start, end, total_length_).size(), 0);
+  ASSERT_EQ(DeriveLaneSRoutes(start, end, total_length_).size(), 0u);
 }
 
 // Verifies DeriveLaneSRoutes() doesn't enter an infinite loop.
@@ -156,7 +156,7 @@ TEST_F(LoopBasedTest, DeriveLaneSRoutesNoInfiniteLoop) {
   const RoadPosition start(start_lane, LanePosition(0, 0, 0));
   const RoadPosition end(end_lane, LanePosition(end_lane->length(), 0, 0));
   const std::vector<LaneSRoute> routes = DeriveLaneSRoutes(start, end, kMaxLength);
-  ASSERT_EQ(routes.size(), 5);
+  ASSERT_EQ(routes.size(), 5u);
 }
 
 // Verifies DeriveLaneSRoutes() can handle start / end positions that are in the
