@@ -3,7 +3,7 @@
 ##############################################################################
 
 cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
-project(maliput-integration-tests LANGUAGES C CXX VERSION 3.0.0)
+project(maliput_integration_tests LANGUAGES C CXX VERSION 3.0.0)
 
 include(${PROJECT_SOURCE_DIR}/cmake/DefaultCFlags.cmake)
 include(${PROJECT_SOURCE_DIR}/cmake/SanitizersConfig.cmake)
