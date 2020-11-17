@@ -1,6 +1,10 @@
-name: gcc
+name: scan_build
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - master
+  pull_request:
 
 env:
   PACKAGE_NAME: maliput_integration_tests
@@ -8,8 +12,8 @@ env:
   ROS_WS: maliput_ws
 
 jobs:
-  compile_and_test:
-    name: Compile and test
+  static_analysis:
+    name: Static analysis
     runs-on: ubuntu-18.04
     container:
       image: ubuntu:18.04
@@ -50,6 +54,9 @@ jobs:
       shell: bash
       working-directory: ${{ env.ROS_WS }}/src/drake_vendor
       run: ${GITHUB_WORKSPACE}/dsim-repos-index/tools/prereqs-install -t drake .
+    - name: clang 8 install
+      shell: bash
+      run: ${{ env.ROS_WS }}/src/${{ env.PACKAGE_NAME }}/.github/clang_suite_installation.sh
     # clone public dependencies
     - name: vcs import
       shell: bash
@@ -64,16 +71,12 @@ jobs:
       run: |
         rosdep update;
         rosdep install  -i -y --rosdistro ${ROS_DISTRO} --skip-keys "pybind11" --from-paths src
-    - name: colcon build
+    - name: scan_build
       shell: bash
       working-directory: ${{ env.ROS_WS }}
       run: |
         . /opt/ros/${ROS_DISTRO}/setup.bash;
-        colcon build --packages-up-to ${PACKAGE_NAME} --event-handlers=console_direct+;
-    - name: colcon test
-      shell: bash
-      working-directory: ${{ env.ROS_WS }}
-      run: |
-        . /opt/ros/${ROS_DISTRO}/setup.bash;
-        colcon test --packages-select ${PACKAGE_NAME} --event-handlers=console_direct+;
-        colcon test-result --verbose;
+        ./src/${PACKAGE_NAME}/.github/run_scan_build \
+            --cmake-args -DCMAKE_LINKER=/usr/bin/llvm-ld \
+            --packages-up-to ${PACKAGE_NAME} \
+            --event-handlers=console_direct+;
