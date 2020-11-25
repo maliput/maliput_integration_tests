@@ -20,7 +20,7 @@ macro(add_dependencies_to_test target)
         maliput_dragway::maliput_dragway
         maliput_dragway::maliput_dragway_test_utilities
         maliput_multilane::maliput_multilane
-        maliput_multilane::maliput_multilane_test_utilities)
+        maliput_multilane::test_utilities)
     endif()
 endmacro()
 
