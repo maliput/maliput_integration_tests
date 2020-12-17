@@ -17,7 +17,7 @@
 namespace maliput {
 namespace {
 
-using api::GeoPosition;
+using api::InertialPosition;
 using api::LaneId;
 using api::LanePosition;
 using api::LaneSRange;
@@ -75,14 +75,14 @@ GTEST_TEST(WaypointsTest, Waypoints) {
   const LaneSRoute route{std::vector<LaneSRange>{range_one, range_two}};
   EXPECT_EQ(route.length(), 14.0);
   const double kSampleSStep{4.0};
-  std::vector<GeoPosition> waypoints = rg->SampleAheadWaypoints(route, kSampleSStep);
-  std::vector<GeoPosition> expected_waypoints{GeoPosition(1.0, 0.0, 0.0), GeoPosition(5.0, 0.0, 0.0),
-                                              GeoPosition(9.0, 0.0, 0.0), GeoPosition(13.0, 0.0, 0.0),
-                                              GeoPosition(15.0, 0.0, 0.0)};
+  std::vector<InertialPosition> waypoints = rg->SampleAheadWaypoints(route, kSampleSStep);
+  std::vector<InertialPosition> expected_waypoints{InertialPosition(1.0, 0.0, 0.0), InertialPosition(5.0, 0.0, 0.0),
+                                                   InertialPosition(9.0, 0.0, 0.0), InertialPosition(13.0, 0.0, 0.0),
+                                                   InertialPosition(15.0, 0.0, 0.0)};
 
   ASSERT_EQ(waypoints.size(), 5u);
   for (unsigned int i = 0; i < waypoints.size(); ++i) {
-    EXPECT_TRUE(api::test::IsGeoPositionClose(waypoints[i], expected_waypoints[i], kLinearTolerance));
+    EXPECT_TRUE(api::test::IsInertialPositionClose(waypoints[i], expected_waypoints[i], kLinearTolerance));
   }
 
   const LaneSRange shorter_than_sample_step_range_one{lane_one->id(), {5., 5.}};
@@ -96,12 +96,12 @@ GTEST_TEST(WaypointsTest, Waypoints) {
   const double kSampleSStepBiggerThanTotalRouteLength = 15.0;
   waypoints = rg->SampleAheadWaypoints(shorter_route, kSampleSStepBiggerThanTotalRouteLength);
   expected_waypoints = {
-      GeoPosition(5.0, 0.0, 0.0),
-      GeoPosition(7.0, 0.0, 0.0),
+      InertialPosition(5.0, 0.0, 0.0),
+      InertialPosition(7.0, 0.0, 0.0),
   };
   ASSERT_EQ(waypoints.size(), 2u);
   for (unsigned int i = 0; i < waypoints.size(); ++i) {
-    EXPECT_TRUE(api::test::IsGeoPositionClose(waypoints[i], expected_waypoints[i], kLinearTolerance));
+    EXPECT_TRUE(api::test::IsInertialPositionClose(waypoints[i], expected_waypoints[i], kLinearTolerance));
   }
 
   const LaneSRange non_existent_range_lane{LaneId("non-existent"), {0., 2.0}};
@@ -115,13 +115,13 @@ GTEST_TEST(WaypointsTest, Waypoints) {
   const LaneSRange linear_tolerance_range{lane_one->id(), {0., kLinearTolerance}};
   const LaneSRoute route_with_linear_tolerance_lane{std::vector<LaneSRange>{linear_tolerance_range}};
   expected_waypoints = {
-      GeoPosition(0.0, 0.0, 0.0),
-      GeoPosition(kLinearTolerance, 0.0, 0.0),
+      InertialPosition(0.0, 0.0, 0.0),
+      InertialPosition(kLinearTolerance, 0.0, 0.0),
   };
   waypoints = rg->SampleAheadWaypoints(route_with_linear_tolerance_lane, step_smaller_than_linear_tolerance);
   EXPECT_EQ(waypoints.size(), 2u);
   for (unsigned int i = 0; i < waypoints.size(); ++i) {
-    EXPECT_TRUE(api::test::IsGeoPositionClose(waypoints[i], expected_waypoints[i], kLinearTolerance));
+    EXPECT_TRUE(api::test::IsInertialPositionClose(waypoints[i], expected_waypoints[i], kLinearTolerance));
   }
 };
 
