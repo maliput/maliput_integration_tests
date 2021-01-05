@@ -271,7 +271,7 @@ TEST_F(GenerateObjBasicDutTest, ChangeOrigin) {
   }
 
   ObjFeatures obj_features;
-  obj_features.origin = api::GeoPosition{kOffsetX, kOffsetY, kOffsetZ};
+  obj_features.origin = api::InertialPosition{kOffsetX, kOffsetY, kOffsetZ};
   GenerateObjFile(dut_.get(), directory_.get_path(), basename, obj_features);
   // We expect to get two files out of this.
 
