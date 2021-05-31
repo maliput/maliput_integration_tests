@@ -4,7 +4,7 @@ Integration tests for road network runtime interface and reference backends - 1)
 
 ## Build
 
-1. Setup a development workspace as described [here](https://github.com/ToyotaResearchInstitute/maliput-documentation/blob/main/docs/installation_quickstart.rst).
+1. Setup a development workspace as described [here](https://github.com/ToyotaResearchInstitute/maliput_documentation/blob/main/docs/installation_quickstart.rst).
 
 2. Bring up your development workspace:
 
