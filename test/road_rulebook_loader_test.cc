@@ -29,8 +29,8 @@
 #include <maliput/test_utilities/rules_direction_usage_compare.h>
 #include <maliput/test_utilities/rules_right_of_way_compare.h>
 #include <maliput/test_utilities/rules_test_utilities.h>
-#include "maliput_multilane/builder.h"
-#include "maliput_multilane/loader.h"
+#include <maliput_multilane/builder.h>
+#include <maliput_multilane/loader.h>
 
 #include <drake/common/find_resource.h>
 

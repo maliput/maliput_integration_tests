@@ -7,8 +7,8 @@
 
 #include <maliput/api/road_geometry.h>
 #include <maliput/common/filesystem.h>
-#include "maliput_multilane/builder.h"
-#include "maliput_multilane/loader.h"
+#include <maliput_multilane/builder.h>
+#include <maliput_multilane/loader.h>
 
 namespace maliput {
 namespace utility {

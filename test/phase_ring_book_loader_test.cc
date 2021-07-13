@@ -22,8 +22,8 @@
 #include <maliput/common/filesystem.h>
 #include <maliput/test_utilities/phases_compare.h>
 #include <maliput/test_utilities/rules_test_utilities.h>
-#include "maliput_multilane/builder.h"
-#include "maliput_multilane/loader.h"
+#include <maliput_multilane/builder.h>
+#include <maliput_multilane/loader.h>
 
 #include <drake/common/find_resource.h>
 

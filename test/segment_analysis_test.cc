@@ -7,7 +7,7 @@
 #include <gtest/gtest.h>
 
 #include <maliput/api/segment.h>
-#include "maliput_multilane/loader.h"
+#include <maliput_multilane/loader.h>
 
 namespace maliput {
 namespace utility {
