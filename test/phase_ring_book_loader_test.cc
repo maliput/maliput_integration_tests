@@ -1,4 +1,4 @@
-#include <maliput/base/phase_ring_book_loader.h>
+#include "maliput/base/phase_ring_book_loader.h"
 
 #include <algorithm>
 #include <memory>

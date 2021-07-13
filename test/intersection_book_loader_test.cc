@@ -1,4 +1,4 @@
-#include <maliput/base/intersection_book_loader.h>
+#include "maliput/base/intersection_book_loader.h"
 
 #include <memory>
 #include <optional>

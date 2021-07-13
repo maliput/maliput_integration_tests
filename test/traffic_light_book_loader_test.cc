@@ -1,4 +1,4 @@
-#include <maliput/base/traffic_light_book_loader.h>
+#include "maliput/base/traffic_light_book_loader.h"
 
 #include <memory>
 #include <optional>
