@@ -10,10 +10,10 @@
 #include <maliput/api/lane.h>
 #include <maliput/api/road_geometry.h>
 #include <maliput/common/filesystem.h>
-#include "maliput_dragway_test_utilities/fixtures.h"
+#include <maliput_dragway_test_utilities/fixtures.h>
 #include <maliput_multilane/builder.h>
 #include <maliput_multilane/loader.h>
-#include "maliput_multilane_test_utilities/fixtures.h"
+#include <maliput_multilane_test_utilities/fixtures.h>
 
 namespace maliput {
 namespace routing {
