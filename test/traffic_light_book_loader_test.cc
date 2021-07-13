@@ -8,7 +8,7 @@
 
 #include <gtest/gtest.h>
 
-#include "drake/common/find_resource.h"
+#include <drake/common/find_resource.h>
 #include <maliput/api/rules/traffic_light_book.h>
 #include <maliput/api/rules/traffic_lights.h>
 #include <maliput/common/filesystem.h>

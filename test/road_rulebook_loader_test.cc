@@ -32,7 +32,7 @@
 #include "maliput_multilane/builder.h"
 #include "maliput_multilane/loader.h"
 
-#include "drake/common/find_resource.h"
+#include <drake/common/find_resource.h>
 
 namespace maliput {
 namespace {
