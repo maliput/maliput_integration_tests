@@ -1,4 +1,4 @@
-#include "maliput/utilities/segment_analysis.h"
+#include <maliput/utilities/segment_analysis.h>
 
 #include <memory>
 #include <set>
@@ -6,7 +6,7 @@
 
 #include <gtest/gtest.h>
 
-#include "maliput/api/segment.h"
+#include <maliput/api/segment.h>
 #include "maliput_multilane/loader.h"
 
 namespace maliput {

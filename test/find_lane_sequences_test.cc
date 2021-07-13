@@ -1,4 +1,4 @@
-#include "maliput/routing/find_lane_sequences.h"
+#include <maliput/routing/find_lane_sequences.h>
 
 #include <memory>
 #include <string>
@@ -7,9 +7,9 @@
 
 #include <gtest/gtest.h>
 
-#include "maliput/api/lane.h"
-#include "maliput/api/road_geometry.h"
-#include "maliput/common/filesystem.h"
+#include <maliput/api/lane.h>
+#include <maliput/api/road_geometry.h>
+#include <maliput/common/filesystem.h>
 #include "maliput_dragway_test_utilities/fixtures.h"
 #include "maliput_multilane/builder.h"
 #include "maliput_multilane/loader.h"

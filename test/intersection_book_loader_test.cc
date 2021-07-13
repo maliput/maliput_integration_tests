@@ -1,4 +1,4 @@
-#include "maliput/base/intersection_book_loader.h"
+#include <maliput/base/intersection_book_loader.h>
 
 #include <memory>
 #include <optional>
@@ -6,18 +6,18 @@
 
 #include <gtest/gtest.h>
 
-#include "maliput/api/intersection_book.h"
-#include "maliput/api/road_geometry.h"
-#include "maliput/api/rules/phase.h"
-#include "maliput/api/rules/phase_ring.h"
-#include "maliput/api/rules/phase_ring_book.h"
-#include "maliput/api/rules/road_rulebook.h"
-#include "maliput/api/rules/traffic_light_book.h"
-#include "maliput/base/manual_phase_provider.h"
-#include "maliput/base/phase_ring_book_loader.h"
-#include "maliput/base/road_rulebook_loader.h"
-#include "maliput/base/traffic_light_book_loader.h"
-#include "maliput/common/filesystem.h"
+#include <maliput/api/intersection_book.h>
+#include <maliput/api/road_geometry.h>
+#include <maliput/api/rules/phase.h>
+#include <maliput/api/rules/phase_ring.h>
+#include <maliput/api/rules/phase_ring_book.h>
+#include <maliput/api/rules/road_rulebook.h>
+#include <maliput/api/rules/traffic_light_book.h>
+#include <maliput/base/manual_phase_provider.h>
+#include <maliput/base/phase_ring_book_loader.h>
+#include <maliput/base/road_rulebook_loader.h>
+#include <maliput/base/traffic_light_book_loader.h>
+#include <maliput/common/filesystem.h>
 #include "maliput_multilane/builder.h"
 #include "maliput_multilane/loader.h"
 
