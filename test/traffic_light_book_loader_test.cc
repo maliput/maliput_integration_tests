@@ -8,15 +8,15 @@
 
 #include <gtest/gtest.h>
 
-#include "drake/common/find_resource.h"
-#include "maliput/api/rules/traffic_light_book.h"
-#include "maliput/api/rules/traffic_lights.h"
-#include "maliput/common/filesystem.h"
-#include "maliput/math/quaternion.h"
-#include "maliput/test_utilities/rules_test_utilities.h"
-#include "maliput/test_utilities/traffic_lights_compare.h"
-#include "maliput_multilane/builder.h"
-#include "maliput_multilane/loader.h"
+#include <drake/common/find_resource.h>
+#include <maliput/api/rules/traffic_light_book.h>
+#include <maliput/api/rules/traffic_lights.h>
+#include <maliput/common/filesystem.h>
+#include <maliput/math/quaternion.h>
+#include <maliput/test_utilities/rules_test_utilities.h>
+#include <maliput/test_utilities/traffic_lights_compare.h>
+#include <maliput_multilane/builder.h>
+#include <maliput_multilane/loader.h>
 
 namespace maliput {
 namespace {
