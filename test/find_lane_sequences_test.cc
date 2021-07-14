@@ -6,7 +6,6 @@
 #include <vector>
 
 #include <gtest/gtest.h>
-
 #include <maliput/api/lane.h>
 #include <maliput/api/road_geometry.h>
 #include <maliput/common/filesystem.h>

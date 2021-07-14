@@ -3,7 +3,6 @@
 #include <vector>
 
 #include <gtest/gtest.h>
-
 #include <maliput/api/lane.h>
 #include <maliput/api/lane_data.h>
 #include <maliput/api/regions.h>
