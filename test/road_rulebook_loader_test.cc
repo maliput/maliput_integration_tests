@@ -1,17 +1,16 @@
 #include "maliput/base/road_rulebook_loader.h"
 
+#include <fstream>
 #include <iterator>
 #include <memory>
 #include <optional>
 #include <string>
 #include <vector>
 
-#include <fstream>
+#include <drake/common/find_resource.h>
 #include <fmt/format.h>
 #include <fmt/ostream.h>
-
 #include <gtest/gtest.h>
-
 #include <maliput/api/lane.h>
 #include <maliput/api/regions.h>
 #include <maliput/api/road_geometry.h>
@@ -31,8 +30,6 @@
 #include <maliput/test_utilities/rules_test_utilities.h>
 #include <maliput_multilane/builder.h>
 #include <maliput_multilane/loader.h>
-
-#include <drake/common/find_resource.h>
 
 namespace maliput {
 namespace {

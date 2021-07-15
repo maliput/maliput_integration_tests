@@ -5,7 +5,6 @@
 #include <string>
 
 #include <gtest/gtest.h>
-
 #include <maliput/api/segment.h>
 #include <maliput_multilane/loader.h>
 

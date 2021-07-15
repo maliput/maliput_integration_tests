@@ -3,7 +3,6 @@
 #include <cmath>
 
 #include <gtest/gtest.h>
-
 #include <maliput/common/filesystem.h>
 #include <maliput_multilane/builder.h>
 #include <maliput_multilane/connection.h>

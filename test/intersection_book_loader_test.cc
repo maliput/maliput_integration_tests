@@ -5,7 +5,6 @@
 #include <string>
 
 #include <gtest/gtest.h>
-
 #include <maliput/api/intersection_book.h>
 #include <maliput/api/road_geometry.h>
 #include <maliput/api/rules/phase.h>

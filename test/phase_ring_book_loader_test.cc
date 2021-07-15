@@ -9,8 +9,8 @@
 #include <utility>
 #include <vector>
 
+#include <drake/common/find_resource.h>
 #include <gtest/gtest.h>
-
 #include <maliput/api/road_geometry.h>
 #include <maliput/api/rules/phase.h>
 #include <maliput/api/rules/phase_ring.h>
@@ -24,8 +24,6 @@
 #include <maliput/test_utilities/rules_test_utilities.h>
 #include <maliput_multilane/builder.h>
 #include <maliput_multilane/loader.h>
-
-#include <drake/common/find_resource.h>
 
 namespace maliput {
 namespace test {
