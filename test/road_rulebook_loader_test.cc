@@ -7,7 +7,6 @@
 #include <string>
 #include <vector>
 
-#include <drake/common/find_resource.h>
 #include <fmt/format.h>
 #include <fmt/ostream.h>
 #include <gtest/gtest.h>
