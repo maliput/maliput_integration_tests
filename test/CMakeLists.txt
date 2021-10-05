@@ -3,7 +3,6 @@ find_package(ament_cmake_gtest REQUIRED)
 macro(add_dependencies_to_test target)
     if (TARGET ${target})
       target_link_libraries(${target}
-        drake::drake
         maliput::api
         maliput::base
         maliput::common

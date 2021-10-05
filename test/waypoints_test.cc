@@ -2,6 +2,8 @@
 #include <string>
 #include <vector>
 
+#include <fmt/format.h>
+#include <fmt/ostream.h>
 #include <gtest/gtest.h>
 #include <maliput/api/lane.h>
 #include <maliput/api/lane_data.h>
