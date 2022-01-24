@@ -1,6 +1,12 @@
+| GCC | Sanitizers(Clang) | Scan-Build |
+| --------- | --------- | -------- |
+|[![gcc](https://github.com/ToyotaResearchInstitute/maliput_integration_tests/actions/workflows/build.yml/badge.svg)](https://github.com/ToyotaResearchInstitute/maliput_integration_tests/actions/workflows/build.yml) | [![clang](https://github.com/ToyotaResearchInstitute/maliput_integration_tests/actions/workflows/sanitizers.yml/badge.svg)](https://github.com/ToyotaResearchInstitute/maliput_integration_tests/actions/workflows/sanitizers.yml) | [![scan_build](https://github.com/ToyotaResearchInstitute/maliput_integration_tests/actions/workflows/scan_build.yml/badge.svg)](https://github.com/ToyotaResearchInstitute/maliput_integration_tests/actions/workflows/scan_build.yml) |
+
 # Maliput Integration Tests
 
-Integration tests for road network runtime interface and reference backends - 1) Dragway, 2) Multilane
+Integration tests for road network runtime interface and reference backends:
+1. maliput_dragway
+1. maliput_multilane
 
 ## Build
 
