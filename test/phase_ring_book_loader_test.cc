@@ -364,7 +364,7 @@ class TestLoading2x2IntersectionPhasebook : public ::testing::Test {
 
 TEST_F(TestLoading2x2IntersectionPhasebook, LoadFromFile) {
   std::unique_ptr<PhaseRingBook> phase_ring_book =
-      LoadPhaseRingBookFromFile(rulebook_.get(), traffic_light_book_.get(), filepath_);
+      LoadPhaseRingBookFromFileOldRules(rulebook_.get(), traffic_light_book_.get(), filepath_);
   EXPECT_NE(phase_ring_book, nullptr);
   const PhaseRing::Id ring_id("2x2Intersection");
   const std::optional<PhaseRing> ring = phase_ring_book->GetPhaseRing(PhaseRing::Id(ring_id));
