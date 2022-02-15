@@ -41,7 +41,7 @@ class TestLoading2x2IntersectionIntersectionBook : public ::testing::Test {
         road_geometry_(multilane::LoadFile(multilane::BuilderFactory(), filepath_)),
         rulebook_(LoadRoadRulebookFromFile(road_geometry_.get(), filepath_)),
         traffic_light_book_(LoadTrafficLightBookFromFile(filepath_)),
-        ring_book_(LoadPhaseRingBookFromFile(rulebook_.get(), traffic_light_book_.get(), filepath_)) {}
+        ring_book_(LoadPhaseRingBookFromFileOldRules(rulebook_.get(), traffic_light_book_.get(), filepath_)) {}
 
   const std::string filepath_;
   const std::unique_ptr<const RoadGeometry> road_geometry_;
