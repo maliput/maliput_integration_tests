@@ -38,16 +38,16 @@ endif()
 # Docs
 ##############################################################################
 
-if(NOT DEFINED BUILD_DOCS)
-  set(BUILD_DOCS 1)
-endif()
-
 if(BUILD_DOCS)
+  message(STATUS "Doxygen generation - Enabled")
   find_package(ament_cmake_doxygen REQUIRED)
   ament_doxygen_generate(doxygen_maliput_integration_tests
     DEPENDENCIES maliput maliput_dragway maliput_multilane
     TEST_ON_WARNS
   )
+  add_definitions(-DBUILD_DOCS)
+else()
+  message(STATUS "Doxygen generation - Disabled")
 endif()
 
 ament_package()
