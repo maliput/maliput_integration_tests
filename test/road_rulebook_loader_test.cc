@@ -241,13 +241,13 @@ class TestLoading2x2IntersectionRules : public ::testing::Test {
         rulebook->GetDiscreteValueRule(GetRuleIdFrom(VehicleStopInZoneBehaviorRuleTypeId(), right_of_way_rule.id()));
     // Compare values.
     EXPECT_DOUBLE_EQ(vehicle_stop_in_zone_discrete_rule.zone().length(), right_of_way_rule.zone().length());
-    EXPECT_EQ(vehicle_stop_in_zone_discrete_rule.values().size(), 1u);
-    EXPECT_EQ(vehicle_stop_in_zone_discrete_rule.values()[0].severity, Rule::State::kStrict);
-    EXPECT_TRUE(vehicle_stop_in_zone_discrete_rule.values()[0].related_rules.empty());
+    EXPECT_EQ(vehicle_stop_in_zone_discrete_rule.states().size(), 1u);
+    EXPECT_EQ(vehicle_stop_in_zone_discrete_rule.states()[0].severity, Rule::State::kStrict);
+    EXPECT_TRUE(vehicle_stop_in_zone_discrete_rule.states()[0].related_rules.empty());
     if (right_of_way_rule.zone_type() == RightOfWayRule::ZoneType::kStopExcluded) {
-      EXPECT_EQ(vehicle_stop_in_zone_discrete_rule.values()[0].value, "DoNotStop");
+      EXPECT_EQ(vehicle_stop_in_zone_discrete_rule.states()[0].value, "DoNotStop");
     } else {
-      EXPECT_EQ(vehicle_stop_in_zone_discrete_rule.values()[0].value, "UnconstrainedParking");
+      EXPECT_EQ(vehicle_stop_in_zone_discrete_rule.states()[0].value, "UnconstrainedParking");
     }
 
     // Check that discrete value rule from the right of way rule type was created.
@@ -259,11 +259,11 @@ class TestLoading2x2IntersectionRules : public ::testing::Test {
     for (const auto& state : right_of_way_rule.states()) {
       // Check if the state of the RightOfWayRule has correspondence with the value of the DiscreteValueRule.
       const auto discrete_value_it =
-          find_if(right_of_way_discrete_rule.values().begin(), right_of_way_discrete_rule.values().end(),
+          find_if(right_of_way_discrete_rule.states().begin(), right_of_way_discrete_rule.states().end(),
                   [right_of_way_rule_state_types, state](DiscreteValueRule::DiscreteValue discrete_value) {
                     return discrete_value.value == right_of_way_rule_state_types.at(state.second.type());
                   });
-      EXPECT_NE(discrete_value_it, right_of_way_discrete_rule.values().end());
+      EXPECT_NE(discrete_value_it, right_of_way_discrete_rule.states().end());
       // Check the related rules of the discrete value.
       EXPECT_EQ(discrete_value_it->related_rules.at(VehicleStopInZoneBehaviorRuleTypeId().string())[0],
                 GetRuleIdFrom(VehicleStopInZoneBehaviorRuleTypeId(), right_of_way_rule.id()));
@@ -280,7 +280,7 @@ class TestLoading2x2IntersectionRules : public ::testing::Test {
     for (const auto& traffic_light_id_vector_bulb_group_id : right_of_way_rule.related_bulb_groups()) {
       related_bulb_group_size += traffic_light_id_vector_bulb_group_id.second.size();
     }
-    for (const auto& discrete_value : right_of_way_discrete_rule.values()) {
+    for (const auto& discrete_value : right_of_way_discrete_rule.states()) {
       EXPECT_EQ(discrete_value.related_unique_ids.at(RelatedUniqueIdsKeys::kBulbGroup).size(), related_bulb_group_size);
       for (const auto& unique_id : discrete_value.related_unique_ids.at(RelatedUniqueIdsKeys::kBulbGroup)) {
         const auto related_bulb_group_it = find_if(
@@ -455,8 +455,8 @@ TEST_F(TestLoadingRulesFromYaml, LoadFromFile) {
                                                           id_discrete_value_rule.second,
                                                           expected_discrete_rule) == testing::AssertionSuccess();
                          return api::rules::test::IsEqual(
-                                    "DiscreteValues", "Expected DiscreteValues", id_discrete_value_rule.second.values(),
-                                    expected_discrete_rule.values()) == testing::AssertionSuccess();
+                                    "DiscreteValues", "Expected DiscreteValues", id_discrete_value_rule.second.states(),
+                                    expected_discrete_rule.states()) == testing::AssertionSuccess();
                        });
       EXPECT_NE(it, expected_discrete_rules.end());
     }
@@ -471,8 +471,8 @@ TEST_F(TestLoadingRulesFromYaml, LoadFromFile) {
           [id_range_value_rule](api::rules::RangeValueRule expected_range_rule) {
             return api::rules::test::IsEqual("RangeValueRule", "Expected RangeValueRule", id_range_value_rule.second,
                                              expected_range_rule) == testing::AssertionSuccess();
-            return api::rules::test::IsEqual("RangeValues", "Expected RangeValues", id_range_value_rule.second.ranges(),
-                                             expected_range_rule.ranges()) == testing::AssertionSuccess();
+            return api::rules::test::IsEqual("RangeValues", "Expected RangeValues", id_range_value_rule.second.states(),
+                                             expected_range_rule.states()) == testing::AssertionSuccess();
           });
       EXPECT_NE(it, expected_range_rules.end());
     }
