@@ -8,7 +8,7 @@ macro(add_dependencies_to_test target)
         maliput::common
         maliput::test_utilities
         maliput::routing
-        maliput::utilities
+        maliput::utility
         maliput_dragway::maliput_dragway
         maliput_dragway::maliput_dragway_test_utilities
         maliput_multilane::maliput_multilane
