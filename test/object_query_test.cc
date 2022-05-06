@@ -58,36 +58,65 @@ struct SimpleObjectQueryResults {
   maliput::math::Vector3 box_position{};
   maliput::math::Vector3 box_size{};
   maliput::math::RollPitchYaw box_orientation{};
-  std::vector<maliput::api::LaneId> expected_lane_ids;
+  std::vector<maliput::api::LaneId> expected_intersected_lane_ids;
+  std::vector<maliput::api::LaneId> expected_disjointed_lane_ids;
 };
 
 std::vector<SimpleObjectQueryResults> InstantiateSimpleObjectQueryParameters() {
   return {
       // At the middle of the lane 0_0_1.
-      {{25., 1.75, 0.}, {0.5, 0.5, 2.}, {0., 0., 0.}, {maliput::api::LaneId{"0_0_1"}}},
+      {{25., 1.75, 0.},
+       {0.5, 0.5, 2.},
+       {0., 0., 0.},
+       {maliput::api::LaneId{"0_0_1"}},
+       {maliput::api::LaneId{"0_0_-1"}, maliput::api::LaneId{"1_0_1"}, maliput::api::LaneId{"1_0_-1"},
+        maliput::api::LaneId{"2_0_1"}, maliput::api::LaneId{"2_0_-1"}, maliput::api::LaneId{"4_0_1"},
+        maliput::api::LaneId{"5_0_-1"}, maliput::api::LaneId{"6_0_-1"}, maliput::api::LaneId{"7_0_-1"},
+        maliput::api::LaneId{"8_0_-1"}, maliput::api::LaneId{"9_0_-1"}}},
       // At the start of the segment 0_0.
-      {{0., 0., 0.}, {5., 5., 2.}, {0., 0., 0.}, {maliput::api::LaneId{"0_0_-1"}, maliput::api::LaneId{"0_0_1"}}},
-      // At the middle of the T intersection.
+      {{0., 0., 0.},
+       {5., 5., 2.},
+       {0., 0., 0.},
+       {maliput::api::LaneId{"0_0_-1"}, maliput::api::LaneId{"0_0_1"}},
+       {maliput::api::LaneId{"1_0_1"}, maliput::api::LaneId{"1_0_-1"}, maliput::api::LaneId{"2_0_1"},
+        maliput::api::LaneId{"2_0_-1"}, maliput::api::LaneId{"4_0_1"}, maliput::api::LaneId{"5_0_-1"},
+        maliput::api::LaneId{"6_0_-1"}, maliput::api::LaneId{"7_0_-1"}, maliput::api::LaneId{"8_0_-1"},
+        maliput::api::LaneId{"9_0_-1"}}},
+      // At the middle of the T intersection avoiding 7_0_-1 and 9_0_-1
       {{50., 0, 0.},
        {0.5, 0.5, 2.},
        {0., 0., 0.},
        {maliput::api::LaneId{"4_0_1"}, maliput::api::LaneId{"5_0_-1"}, maliput::api::LaneId{"6_0_-1"},
-        maliput::api::LaneId{"7_0_-1"}, maliput::api::LaneId{"8_0_-1"}, maliput::api::LaneId{"9_0_-1"}}},
+        maliput::api::LaneId{"8_0_-1"}},
+       {maliput::api::LaneId{"0_0_1"}, maliput::api::LaneId{"0_0_-1"}, maliput::api::LaneId{"1_0_1"},
+        maliput::api::LaneId{"1_0_-1"}, maliput::api::LaneId{"2_0_1"}, maliput::api::LaneId{"2_0_-1"},
+        maliput::api::LaneId{"7_0_-1"}, maliput::api::LaneId{"9_0_-1"}}},
+      // At the middle of the T intersection intersecting all the lanes in the intersection.
+      {{50., 0, 0.},
+       {3., 3., 2.},
+       {0., 0., 0.},
+       {maliput::api::LaneId{"4_0_1"}, maliput::api::LaneId{"5_0_-1"}, maliput::api::LaneId{"6_0_-1"},
+        maliput::api::LaneId{"7_0_-1"}, maliput::api::LaneId{"8_0_-1"}, maliput::api::LaneId{"9_0_-1"}},
+       {maliput::api::LaneId{"0_0_1"}, maliput::api::LaneId{"0_0_-1"}, maliput::api::LaneId{"1_0_1"},
+        maliput::api::LaneId{"1_0_-1"}, maliput::api::LaneId{"2_0_1"}, maliput::api::LaneId{"2_0_-1"}}},
       // At the middle of the T intersection. Extruded in y direction.
       {{50., 0, 0.},
-       {0.5, 10., 2.},
+       {3, 10., 2.},
        {0., 0., 0.},
        {maliput::api::LaneId{"2_0_1"}, maliput::api::LaneId{"2_0_-1"}, maliput::api::LaneId{"4_0_1"},
         maliput::api::LaneId{"5_0_-1"}, maliput::api::LaneId{"6_0_-1"}, maliput::api::LaneId{"7_0_-1"},
-        maliput::api::LaneId{"8_0_-1"}, maliput::api::LaneId{"9_0_-1"}}},
+        maliput::api::LaneId{"8_0_-1"}, maliput::api::LaneId{"9_0_-1"}},
+       {maliput::api::LaneId{"0_0_1"}, maliput::api::LaneId{"0_0_-1"}, maliput::api::LaneId{"1_0_1"},
+        maliput::api::LaneId{"1_0_-1"}}},
       // At the middle of the T intersection. Extruded in x direction.
       {{50., 0, 0.},
-       {10, 0.5, 2.},
+       {10, 3, 2.},
        {0., 0., 0.},
        {maliput::api::LaneId{"0_0_1"}, maliput::api::LaneId{"0_0_-1"}, maliput::api::LaneId{"1_0_1"},
         maliput::api::LaneId{"1_0_-1"}, maliput::api::LaneId{"4_0_1"}, maliput::api::LaneId{"5_0_-1"},
         maliput::api::LaneId{"6_0_-1"}, maliput::api::LaneId{"7_0_-1"}, maliput::api::LaneId{"8_0_-1"},
-        maliput::api::LaneId{"9_0_-1"}}},
+        maliput::api::LaneId{"9_0_-1"}},
+       {maliput::api::LaneId{"2_0_1"}, maliput::api::LaneId{"2_0_-1"}}},
       // At the middle of the T intersection. Extruded in both x and y direction. All lanes are intersected.
       {{50., 0, 0.},
        {10, 10, 2.},
@@ -95,7 +124,8 @@ std::vector<SimpleObjectQueryResults> InstantiateSimpleObjectQueryParameters() {
        {maliput::api::LaneId{"0_0_1"}, maliput::api::LaneId{"0_0_-1"}, maliput::api::LaneId{"1_0_1"},
         maliput::api::LaneId{"1_0_-1"}, maliput::api::LaneId{"2_0_1"}, maliput::api::LaneId{"2_0_-1"},
         maliput::api::LaneId{"4_0_1"}, maliput::api::LaneId{"5_0_-1"}, maliput::api::LaneId{"6_0_-1"},
-        maliput::api::LaneId{"7_0_-1"}, maliput::api::LaneId{"8_0_-1"}, maliput::api::LaneId{"9_0_-1"}}},
+        maliput::api::LaneId{"7_0_-1"}, maliput::api::LaneId{"8_0_-1"}, maliput::api::LaneId{"9_0_-1"}},
+       {}},
   };
 }
 
@@ -126,11 +156,22 @@ TEST_P(SimpleObjectQueryFindLanesTest, FindOverlappingLanes) {
       {},
       std::make_unique<object::BoundingBox>(results_.box_position, results_.box_size, results_.box_orientation,
                                             kTolerance)};
-
-  auto lanes = dut_->FindOverlappingLanesIn(&object);
-  for (const auto lane : lanes) {
-    EXPECT_FOUND_IN(lane->id(), results_.expected_lane_ids);
+  const auto intersected_lanes =
+      dut_->FindOverlappingLanesIn(&object, maliput::object::api::OverlappingType::kIntersected);
+  EXPECT_EQ(results_.expected_intersected_lane_ids.size(), intersected_lanes.size());
+  for (const auto lane : intersected_lanes) {
+    EXPECT_FOUND_IN(lane->id(), results_.expected_intersected_lane_ids);
   }
+
+  const auto disjointed_lanes =
+      dut_->FindOverlappingLanesIn(&object, maliput::object::api::OverlappingType::kDisjointed);
+  EXPECT_EQ(results_.expected_disjointed_lane_ids.size(), disjointed_lanes.size());
+  for (const auto lane : disjointed_lanes) {
+    EXPECT_FOUND_IN(lane->id(), results_.expected_disjointed_lane_ids);
+  }
+
+  EXPECT_THROW(dut_->FindOverlappingLanesIn(&object, maliput::object::api::OverlappingType::kContained),
+               maliput::common::assertion_error);
 }
 
 INSTANTIATE_TEST_CASE_P(SimpleObjectQueryGroupTest, SimpleObjectQueryFindLanesTest,
