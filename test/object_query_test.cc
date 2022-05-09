@@ -170,6 +170,8 @@ TEST_P(SimpleObjectQueryFindLanesTest, FindOverlappingLanes) {
     EXPECT_FOUND_IN(lane->id(), results_.expected_disjointed_lane_ids);
   }
 
+  // TODO(#https://github.com/ToyotaResearchInstitute/maliput_object/issues/22): Adds test for
+  // OverlappingType::kContained once that case is implemented.
   EXPECT_THROW(dut_->FindOverlappingLanesIn(&object, maliput::object::api::OverlappingType::kContained),
                maliput::common::assertion_error);
 }
