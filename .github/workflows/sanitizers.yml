@@ -61,9 +61,21 @@ jobs:
         token: ${{ secrets.MALIPUT_TOKEN }}
     - uses: actions/checkout@v2
       with:
+        repository: ToyotaResearchInstitute/maliput_malidrive
+        fetch-depth: 0
+        path: ${{ env.ROS_WS }}/src/maliput_malidrive
+        token: ${{ secrets.MALIPUT_TOKEN }}
+    - uses: actions/checkout@v2
+      with:
         repository: ToyotaResearchInstitute/maliput_multilane
         fetch-depth: 0
         path: ${{ env.ROS_WS }}/src/maliput_multilane
+        token: ${{ secrets.MALIPUT_TOKEN }}
+    - uses: actions/checkout@v2
+      with:
+        repository: ToyotaResearchInstitute/maliput_object
+        fetch-depth: 0
+        path: ${{ env.ROS_WS }}/src/maliput_object
         token: ${{ secrets.MALIPUT_TOKEN }}
     - uses: actions/checkout@v2
       with:

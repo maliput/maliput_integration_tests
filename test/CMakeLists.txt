@@ -1,3 +1,4 @@
+find_package(ament_cmake_gmock REQUIRED)
 find_package(ament_cmake_gtest REQUIRED)
 
 macro(add_dependencies_to_test target)
@@ -9,8 +10,11 @@ macro(add_dependencies_to_test target)
         maliput::test_utilities
         maliput::routing
         maliput::utility
+        maliput_object::api
+        maliput_object::base
         maliput_dragway::maliput_dragway
         maliput_dragway::maliput_dragway_test_utilities
+        maliput_malidrive::builder
         maliput_multilane::maliput_multilane
         maliput_multilane::test_utilities)
     endif()
@@ -31,6 +35,7 @@ ament_add_gtest(generate_obj_test generate_obj_test.cc WORKING_DIRECTORY ${TEST_
 ament_add_gtest(generate_string_test generate_string_test.cc)
 ament_add_gtest(generate_urdf_test generate_urdf_test.cc)
 ament_add_gtest(intersection_book_loader_test intersection_book_loader_test.cc)
+ament_add_gmock(object_query_test object_query_test.cc)
 ament_add_gtest(phase_ring_book_loader_test phase_ring_book_loader_test.cc)
 ament_add_gtest(road_rulebook_loader_test road_rulebook_loader_test.cc)
 ament_add_gtest(segment_analysis_test segment_analysis_test.cc)
@@ -43,6 +48,7 @@ add_dependencies_to_test(generate_obj_test)
 add_dependencies_to_test(generate_string_test)
 add_dependencies_to_test(generate_urdf_test)
 add_dependencies_to_test(intersection_book_loader_test)
+add_dependencies_to_test(object_query_test)
 add_dependencies_to_test(phase_ring_book_loader_test)
 add_dependencies_to_test(road_rulebook_loader_test)
 add_dependencies_to_test(segment_analysis_test)

@@ -21,7 +21,9 @@ if(NOT ${fmt_FOUND})
 endif()
 find_package(maliput REQUIRED)
 find_package(maliput_dragway REQUIRED)
+find_package(maliput_malidrive REQUIRED)
 find_package(maliput_multilane REQUIRED)
+find_package(maliput_object REQUIRED)
 
 ##############################################################################
 # Tests
