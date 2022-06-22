@@ -17,6 +17,16 @@ macro(add_dependencies_to_test target)
         maliput_malidrive::builder
         maliput_multilane::maliput_multilane
         maliput_multilane::test_utilities)
+
+      # TODO(https://github.com/maliput/maliput_infrastructure/issues/222): Use ament_index for finding resources provided by the packages.
+      set(MALIPUT_MULTILANE_RESOURCE_PATH "${maliput_multilane_DIR}/..")
+      set(MALIPUT_MALIDRIVE_RESOURCE_PATH "${maliput_malidrive_DIR}/..")
+
+      target_compile_definitions(${target}
+        PRIVATE
+          DEF_MALIDRIVE_RESOURCES="${MALIPUT_MALIDRIVE_RESOURCE_PATH}"
+          DEF_MULTILANE_RESOURCES="${MALIPUT_MULTILANE_RESOURCE_PATH}"
+      )
     endif()
 endmacro()
 

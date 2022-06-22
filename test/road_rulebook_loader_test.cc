@@ -62,7 +62,7 @@
 namespace maliput {
 namespace {
 
-constexpr char MULTILANE_RESOURCE_VAR[] = "MULTILANE_RESOURCE_ROOT";
+static constexpr char kMultilaneResourcesPath[] = DEF_MULTILANE_RESOURCES;
 
 using maliput::api::LaneId;
 using maliput::api::LaneSRange;
@@ -81,7 +81,7 @@ using maliput::api::rules::UniqueBulbGroupId;
 class TestLoading2x2IntersectionRules : public ::testing::Test {
  protected:
   TestLoading2x2IntersectionRules()
-      : filepath_(maliput::common::Filesystem::get_env_path(MULTILANE_RESOURCE_VAR) + "/2x2_intersection.yaml"),
+      : filepath_(std::string(kMultilaneResourcesPath) + "/2x2_intersection.yaml"),
         road_geometry_(multilane::LoadFile(multilane::BuilderFactory(), filepath_)) {}
 
   std::vector<RightOfWayRule> CreateStraightThroughRightOfWayRules() const {

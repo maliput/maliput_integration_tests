@@ -73,7 +73,7 @@ using api::rules::TrafficLightBook;
 using api::rules::UniqueBulbGroupId;
 using api::rules::UniqueBulbId;
 
-constexpr char MULTILANE_RESOURCE_VAR[] = "MULTILANE_RESOURCE_ROOT";
+static constexpr char kMultilaneResourcesPath[] = DEF_MULTILANE_RESOURCES;
 
 // Returns the RelatedVehicleInZoneStopBehavior api::rules::Rule::RelatedRules.
 //
@@ -119,7 +119,7 @@ Rule::RelatedUniqueIds CreateRelatedBulbGroups(const std::string& unique_bulb_gr
 class TestLoading2x2IntersectionPhasebook : public ::testing::Test {
  protected:
   TestLoading2x2IntersectionPhasebook()
-      : filepath_(maliput::common::Filesystem::get_env_path(MULTILANE_RESOURCE_VAR) + "/2x2_intersection.yaml"),
+      : filepath_(std::string(kMultilaneResourcesPath) + "/2x2_intersection.yaml"),
         road_geometry_(multilane::LoadFile(multilane::BuilderFactory(), filepath_)),
         rulebook_(LoadRoadRulebookFromFile(road_geometry_.get(), filepath_)),
         traffic_light_book_(LoadTrafficLightBookFromFile(filepath_)),

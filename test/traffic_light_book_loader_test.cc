@@ -58,12 +58,13 @@ using api::rules::BulbType;
 using api::rules::TrafficLight;
 using api::rules::TrafficLightBook;
 using api::rules::UniqueBulbId;
-constexpr char MULTILANE_RESOURCE_VAR[] = "MULTILANE_RESOURCE_ROOT";
+
+static constexpr char kMultilaneResourcesPath[] = DEF_MULTILANE_RESOURCES;
 
 class TestLoading2x2IntersectionTrafficLightbook : public ::testing::Test {
  protected:
   TestLoading2x2IntersectionTrafficLightbook()
-      : filepath_(maliput::common::Filesystem::get_env_path(MULTILANE_RESOURCE_VAR) + "/2x2_intersection.yaml") {
+      : filepath_(std::string(kMultilaneResourcesPath) + "/2x2_intersection.yaml") {
     std::vector<std::unique_ptr<Bulb>> bulbs;
     std::vector<std::unique_ptr<BulbGroup>> bulb_groups;
 
