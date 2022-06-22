@@ -78,6 +78,9 @@ using maliput::api::rules::Rule;
 using maliput::api::rules::TrafficLight;
 using maliput::api::rules::UniqueBulbGroupId;
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+
 class TestLoading2x2IntersectionRules : public ::testing::Test {
  protected:
   TestLoading2x2IntersectionRules()
@@ -507,6 +510,8 @@ TEST_F(TestLoadingRulesFromYaml, LoadFromFile) {
     }
   }
 }
+
+#pragma GCC diagnostic pop
 
 }  // namespace
 }  // namespace maliput
