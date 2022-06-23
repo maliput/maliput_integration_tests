@@ -41,15 +41,13 @@
 namespace maliput {
 namespace utility {
 
-static constexpr char MULTILANE_RESOURCE_VAR[] = "MULTILANE_RESOURCE_ROOT";
+static constexpr char kMultilaneResourcesPath[] = DEF_MULTILANE_RESOURCES;
 
 class GenerateStringTest : public ::testing::Test {
  protected:
   GenerateStringTest() {
     static const char* const kFileName = "/2x2_intersection.yaml";
-    const std::string env_path = maliput::common::Filesystem::get_env_path(MULTILANE_RESOURCE_VAR);
-    EXPECT_TRUE(!env_path.empty());
-    filepath_ = env_path + kFileName;
+    filepath_ = std::string(kMultilaneResourcesPath) + kFileName;
     road_geometry_ = multilane::LoadFile(multilane::BuilderFactory(), filepath_);
   }
 

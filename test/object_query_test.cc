@@ -81,7 +81,7 @@ inline ::testing::AssertionResult IsEqual(const maliput::api::LaneSRoute& lane_s
 
 using api::RoadNetwork;
 
-constexpr char MALIPUT_MALIDRIVE_RESOURCE_VAR[] = "MALIPUT_MALIDRIVE_RESOURCE_ROOT";
+static constexpr char kMalidriveResourcesPath[] = DEF_MALIDRIVE_RESOURCES;
 
 struct SimpleObjectQueryResults {
   maliput::math::Vector3 box_position{};
@@ -161,8 +161,7 @@ std::vector<SimpleObjectQueryResults> InstantiateSimpleObjectQueryParameters() {
 class SimpleObjectQueryFindLanesTest : public ::testing::TestWithParam<SimpleObjectQueryResults> {
  public:
   SimpleObjectQueryFindLanesTest()
-      : filepath_(maliput::common::Filesystem::get_env_path(MALIPUT_MALIDRIVE_RESOURCE_VAR) +
-                  "/resources/odr/TShapeRoad.xodr") {}
+      : filepath_(std::string(kMalidriveResourcesPath) + "/resources/odr/TShapeRoad.xodr") {}
 
   void SetUp() override {
     road_network_ = malidrive::builder::RoadNetworkBuilder(configuration_)();
@@ -236,9 +235,7 @@ std::vector<SimpleObjectQueryRouteResults> InstantiateSimpleObjectQueryRoutePara
 
 class SimpleObjectQueryRouteTest : public ::testing::TestWithParam<SimpleObjectQueryRouteResults> {
  public:
-  SimpleObjectQueryRouteTest()
-      : filepath_(maliput::common::Filesystem::get_env_path(MALIPUT_MALIDRIVE_RESOURCE_VAR) +
-                  "/resources/odr/TShapeRoad.xodr") {}
+  SimpleObjectQueryRouteTest() : filepath_(std::string(kMalidriveResourcesPath) + "/resources/odr/TShapeRoad.xodr") {}
 
   void SetUp() override {
     road_network_ = malidrive::builder::RoadNetworkBuilder(configuration_)();

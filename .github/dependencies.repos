@@ -3,7 +3,31 @@ repositories:
     type: git
     url: https://github.com/ToyotaResearchInstitute/ament_cmake_doxygen
     version: main
-  pybind11:
+  maliput:
     type: git
-    url: https://github.com/RobotLocomotion/pybind11.git
-    version: c39ede1eedd4f39aa167d7b30b53ae45967c39b7
+    url: https://github.com/maliput/maliput
+    version: main
+  maliput_py:
+    type: git
+    url: https://github.com/maliput/maliput_py
+    version: main
+  maliput_drake:
+    type: git
+    url: https://github.com/maliput/maliput_drake
+    version: main
+  maliput_dragway:
+    type: git
+    url: https://github.com/maliput/maliput_dragway
+    version: main
+  maliput_malidrive:
+    type: git
+    url: https://github.com/maliput/maliput_malidrive
+    version: main
+  maliput_multilane:
+    type: git
+    url: https://github.com/maliput/maliput_multilane
+    version: main
+  maliput_object:
+    type: git
+    url: https://github.com/maliput/maliput_object
+    version: main

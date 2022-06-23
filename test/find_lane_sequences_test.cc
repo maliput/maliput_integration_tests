@@ -83,8 +83,6 @@ void CheckSequences(const std::vector<std::vector<const Lane*>>& sequences,
 
 }  // namespace
 
-constexpr char MULTILANE_RESOURCE_VAR[] = "MULTILANE_RESOURCE_ROOT";
-
 TEST_F(DragwayBasedTest, FindLaneSequencesChangeLanes) {
   CheckSequences(FindLaneSequences(center_lane_, left_lane_, kLength), {});
   CheckSequences(FindLaneSequences(center_lane_, right_lane_, kLength), {});
@@ -159,10 +157,11 @@ TEST_F(MultiBranchBasedTest, FindLaneSequencesTest) {
   }
 }
 
+static constexpr char kMultilaneResourcesPath[] = DEF_MULTILANE_RESOURCES;
+
 GTEST_TEST(FindLaneSequencesTest, NoRouteToEndLane) {
   std::unique_ptr<const RoadGeometry> road = maliput::multilane::LoadFile(
-      maliput::multilane::BuilderFactory(),
-      maliput::common::Filesystem::get_env_path(MULTILANE_RESOURCE_VAR) + "/dual_non_intersecting_lanes.yaml");
+      maliput::multilane::BuilderFactory(), std::string(kMultilaneResourcesPath) + "/dual_non_intersecting_lanes.yaml");
   const Lane* start_lane = road->junction(0)->segment(0)->lane(0);
   const Lane* end_lane = road->junction(1)->segment(0)->lane(0);
   ASSERT_EQ(FindLaneSequences(start_lane, end_lane, start_lane->length() + end_lane->length()).size(), 0u);
@@ -170,8 +169,7 @@ GTEST_TEST(FindLaneSequencesTest, NoRouteToEndLane) {
 
 GTEST_TEST(FindLaneSequencesTest, MaxLengthOmitsStartAndEndLanes) {
   std::unique_ptr<const RoadGeometry> road = maliput::multilane::LoadFile(
-      maliput::multilane::BuilderFactory(),
-      maliput::common::Filesystem::get_env_path(MULTILANE_RESOURCE_VAR) + "/long_start_and_end_lanes.yaml");
+      maliput::multilane::BuilderFactory(), std::string(kMultilaneResourcesPath) + "/long_start_and_end_lanes.yaml");
   const RoadGeometry::IdIndex& index = road->ById();
   const Lane* start_lane = index.GetLane(LaneId("l:0_0"));
   const Lane* middle_lane = index.GetLane(LaneId("l:1_0"));
