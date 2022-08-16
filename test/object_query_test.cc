@@ -34,12 +34,12 @@
 #include <gtest/gtest.h>
 #include <maliput/api/road_network.h>
 #include <maliput/common/filesystem.h>
+#include <maliput/math/bounding_box.h>
 #include <maliput_malidrive/builder/params.h>
 #include <maliput_malidrive/builder/road_network_builder.h>
 #include <maliput_multilane/builder.h>
 #include <maliput_multilane/loader.h>
 #include <maliput_object/api/object_query.h>
-#include <maliput_object/base/bounding_box.h>
 #include <maliput_object/base/simple_object_query.h>
 #include <maliput_object/test_utilities/mock.h>
 
@@ -182,17 +182,15 @@ TEST_P(SimpleObjectQueryFindLanesTest, FindOverlappingLanes) {
   const object::api::Object<maliput::math::Vector3> object{
       kId,
       {},
-      std::make_unique<object::BoundingBox>(results_.box_position, results_.box_size, results_.box_orientation,
-                                            kTolerance)};
-  const auto intersected_lanes =
-      dut_->FindOverlappingLanesIn(&object, maliput::object::api::OverlappingType::kIntersected);
+      std::make_unique<math::BoundingBox>(results_.box_position, results_.box_size, results_.box_orientation,
+                                          kTolerance)};
+  const auto intersected_lanes = dut_->FindOverlappingLanesIn(&object, maliput::math::OverlappingType::kIntersected);
   EXPECT_EQ(results_.expected_intersected_lane_ids.size(), intersected_lanes.size());
   for (const auto lane : intersected_lanes) {
     EXPECT_FOUND_IN(lane->id(), results_.expected_intersected_lane_ids);
   }
 
-  const auto disjointed_lanes =
-      dut_->FindOverlappingLanesIn(&object, maliput::object::api::OverlappingType::kDisjointed);
+  const auto disjointed_lanes = dut_->FindOverlappingLanesIn(&object, maliput::math::OverlappingType::kDisjointed);
   EXPECT_EQ(results_.expected_disjointed_lane_ids.size(), disjointed_lanes.size());
   for (const auto lane : disjointed_lanes) {
     EXPECT_FOUND_IN(lane->id(), results_.expected_disjointed_lane_ids);
@@ -200,7 +198,7 @@ TEST_P(SimpleObjectQueryFindLanesTest, FindOverlappingLanes) {
 
   // TODO(#https://github.com/ToyotaResearchInstitute/maliput_object/issues/22): Adds test for
   // OverlappingType::kContained once that case is implemented.
-  EXPECT_THROW(dut_->FindOverlappingLanesIn(&object, maliput::object::api::OverlappingType::kContained),
+  EXPECT_THROW(dut_->FindOverlappingLanesIn(&object, maliput::math::OverlappingType::kContained),
                maliput::common::assertion_error);
 }
 
@@ -256,13 +254,13 @@ TEST_P(SimpleObjectQueryRouteTest, Route) {
   const object::api::Object<maliput::math::Vector3> origin_obj{
       kId,
       {},
-      std::make_unique<object::BoundingBox>(results_.origin.position, results_.origin.size, results_.origin.orientation,
-                                            kTolerance)};
+      std::make_unique<math::BoundingBox>(results_.origin.position, results_.origin.size, results_.origin.orientation,
+                                          kTolerance)};
   const object::api::Object<maliput::math::Vector3> target_obj{
       kId,
       {},
-      std::make_unique<object::BoundingBox>(results_.target.position, results_.target.size, results_.target.orientation,
-                                            kTolerance)};
+      std::make_unique<math::BoundingBox>(results_.target.position, results_.target.size, results_.target.orientation,
+                                          kTolerance)};
 
   const auto lane_s_route = dut_->Route(&origin_obj, &target_obj);
   ASSERT_TRUE(lane_s_route.has_value());
