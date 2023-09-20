@@ -28,11 +28,10 @@
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <memory>
+#include <sstream>
 #include <string>
 #include <vector>
 
-#include <fmt/format.h>
-#include <fmt/ostream.h>
 #include <gtest/gtest.h>
 #include <maliput/api/lane.h>
 #include <maliput/api/lane_data.h>
@@ -64,17 +63,19 @@ GTEST_TEST(WaypointsTest, Waypoints) {
   const api::HBounds kElevationBounds{0., 5.};
   const double kLinearTolerance = 0.01;
   const double kAngularTolerance = 0.5;
-  const std::string kMultilaneYaml = fmt::format(
-      R"R(maliput_multilane_builder:
-  id: {}
-  computation_policy: {}
-  scale_length: {}
-  lane_width: {}
-  left_shoulder: {}
-  right_shoulder: {}
-  elevation_bounds: [{}, {}]
-  linear_tolerance: {}
-  angular_tolerance: {}
+  const std::string kMultilaneYaml = [&]() {
+    std::stringstream ss;
+    ss << "maliput_multilane_builder:\n";
+    ss << "  id: " << kId << "\n";
+    ss << "  computation_policy: " << kComputationPolicy << "\n";
+    ss << "  scale_length: " << kScaleLength << "\n";
+    ss << "  lane_width: " << kLaneWidth << "\n";
+    ss << "  left_shoulder: " << kLeftShoulder << "\n";
+    ss << "  right_shoulder: " << kRightShoulder << "\n";
+    ss << "  elevation_bounds: [" << kElevationBounds.min() << ", " << kElevationBounds.max() << "]\n";
+    ss << "  linear_tolerance: " << kLinearTolerance << "\n";
+    ss << "  angular_tolerance: " << kAngularTolerance << "\n";
+    ss << R"R(
   points:
     start:
       xypoint: [0, 0, 0]
@@ -90,9 +91,10 @@ GTEST_TEST(WaypointsTest, Waypoints) {
       start: ["ref", "connections.0.end.ref.forward"]
       length: 10
       z_end: ["ref", [0, 0, 0]]
-)R",
-      kId, kComputationPolicy, kScaleLength, kLaneWidth, kLeftShoulder, kRightShoulder, kElevationBounds.min(),
-      kElevationBounds.max(), kLinearTolerance, kAngularTolerance);
+)R";
+
+    return ss.str();
+  }();
 
   std::unique_ptr<const RoadGeometry> rg = Load(multilane::BuilderFactory(), kMultilaneYaml);
   ASSERT_NE(rg, nullptr);

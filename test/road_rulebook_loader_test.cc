@@ -36,8 +36,6 @@
 #include <string>
 #include <vector>
 
-#include <fmt/format.h>
-#include <fmt/ostream.h>
 #include <gtest/gtest.h>
 #include <maliput/api/lane.h>
 #include <maliput/api/regions.h>
@@ -391,7 +389,7 @@ class TestLoadingRulesFromYaml : public ::testing::Test {
   }
   // Returns a YAML string representation of an api::rules::Rulebook with three rules with different rule types.
   std::string GenerateRulebookString() {
-    return fmt::format(
+    return
         R"R(RoadRulebook:
   - id: "rule1"
     type: "Right-Of-Way Rule Type"
@@ -427,7 +425,7 @@ class TestLoadingRulesFromYaml : public ::testing::Test {
         severity: 0
         related_rules: []
         related_unique_ids: []
-)R");
+)R";
   }
 
   // Creates a vector of api::rules::DiscreteValueRule.
@@ -461,7 +459,7 @@ class TestLoadingRulesFromYaml : public ::testing::Test {
   // Generates a YAML file located in 'filepath' from 'string_to_yaml''s content.
   void GenerateYamlFileFromString(const std::string& string_to_yaml, const std::string& filepath) {
     std::ofstream os(filepath);
-    fmt::print(os, string_to_yaml);
+    os << string_to_yaml;
   }
 
   common::Path directory_;
