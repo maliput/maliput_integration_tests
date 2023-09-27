@@ -11,10 +11,6 @@ repositories:
     type: git
     url: https://github.com/maliput/maliput_py
     version: main
-  maliput_drake:
-    type: git
-    url: https://github.com/maliput/maliput_drake
-    version: main
   maliput_dragway:
     type: git
     url: https://github.com/maliput/maliput_dragway
