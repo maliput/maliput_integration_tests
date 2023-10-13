@@ -40,6 +40,7 @@
 
 #include <gtest/gtest.h>
 #include <maliput/api/road_geometry.h>
+#include <maliput/api/rules/compare.h>
 #include <maliput/api/rules/phase.h>
 #include <maliput/api/rules/phase_ring.h>
 #include <maliput/api/rules/right_of_way_rule.h>
@@ -48,10 +49,10 @@
 #include <maliput/base/rule_registry.h>
 #include <maliput/base/traffic_light_book_loader.h>
 #include <maliput/common/filesystem.h>
-#include <maliput/test_utilities/phases_compare.h>
-#include <maliput/test_utilities/rules_test_utilities.h>
 #include <maliput_multilane/builder.h>
 #include <maliput_multilane/loader.h>
+
+#include "assert_compare.h"
 
 namespace maliput {
 namespace test {
@@ -403,13 +404,14 @@ TEST_F(TestLoading2x2IntersectionPhasebook, LoadFromFile) {
   EXPECT_EQ(phases.size(), expected_phases_.size());
 
   for (const auto& expected_phase : expected_phases_) {
-    EXPECT_TRUE(MALIPUT_IS_EQUAL(expected_phase, phases.at(expected_phase.id())));
+    EXPECT_TRUE(AssertCompare(api::rules::IsEqual(expected_phase, phases.at(expected_phase.id()))));
   }
 
   const std::unordered_map<Phase::Id, std::vector<PhaseRing::NextPhase>>& next_phases = ring->next_phases();
   EXPECT_EQ(next_phases.size(), expected_next_phases_.size());
   for (const auto& expected_next_phase : expected_next_phases_) {
-    EXPECT_TRUE(MALIPUT_IS_EQUAL(expected_next_phase.second, next_phases.at(expected_next_phase.first)));
+    EXPECT_TRUE(
+        AssertCompare(api::rules::IsEqual(expected_next_phase.second, next_phases.at(expected_next_phase.first))));
   }
 }
 

@@ -33,15 +33,17 @@
 #include <vector>
 
 #include <gtest/gtest.h>
+#include <maliput/api/compare.h>
 #include <maliput/api/lane.h>
 #include <maliput/api/lane_data.h>
 #include <maliput/api/regions.h>
 #include <maliput/api/road_geometry.h>
 #include <maliput/common/assertion_error.h>
 #include <maliput/common/filesystem.h>
-#include <maliput/test_utilities/maliput_types_compare.h>
 #include <maliput_multilane/builder.h>
 #include <maliput_multilane/loader.h>
+
+#include "assert_compare.h"
 
 namespace maliput {
 namespace {
@@ -52,6 +54,8 @@ using api::LanePosition;
 using api::LaneSRange;
 using api::LaneSRoute;
 using api::RoadGeometry;
+using maliput::api::IsEqual;
+using maliput::test::AssertCompare;
 
 GTEST_TEST(WaypointsTest, Waypoints) {
   const std::string kId = "long_start_and_end_lanes";
@@ -114,7 +118,7 @@ GTEST_TEST(WaypointsTest, Waypoints) {
 
   ASSERT_EQ(waypoints.size(), 5u);
   for (unsigned int i = 0; i < waypoints.size(); ++i) {
-    EXPECT_TRUE(api::test::IsInertialPositionClose(waypoints[i], expected_waypoints[i], kLinearTolerance));
+    EXPECT_TRUE(AssertCompare(IsInertialPositionClose(waypoints[i], expected_waypoints[i], kLinearTolerance)));
   }
 
   const LaneSRange shorter_than_sample_step_range_one{lane_one->id(), {5., 5.}};
@@ -133,7 +137,7 @@ GTEST_TEST(WaypointsTest, Waypoints) {
   };
   ASSERT_EQ(waypoints.size(), 2u);
   for (unsigned int i = 0; i < waypoints.size(); ++i) {
-    EXPECT_TRUE(api::test::IsInertialPositionClose(waypoints[i], expected_waypoints[i], kLinearTolerance));
+    EXPECT_TRUE(AssertCompare(IsInertialPositionClose(waypoints[i], expected_waypoints[i], kLinearTolerance)));
   }
 
   const LaneSRange non_existent_range_lane{LaneId("non-existent"), {0., 2.0}};
@@ -153,7 +157,7 @@ GTEST_TEST(WaypointsTest, Waypoints) {
   waypoints = rg->SampleAheadWaypoints(route_with_linear_tolerance_lane, step_smaller_than_linear_tolerance);
   EXPECT_EQ(waypoints.size(), 2u);
   for (unsigned int i = 0; i < waypoints.size(); ++i) {
-    EXPECT_TRUE(api::test::IsInertialPositionClose(waypoints[i], expected_waypoints[i], kLinearTolerance));
+    EXPECT_TRUE(AssertCompare(IsInertialPositionClose(waypoints[i], expected_waypoints[i], kLinearTolerance)));
   }
 };
 
