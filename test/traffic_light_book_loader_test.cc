@@ -36,14 +36,15 @@
 #include <vector>
 
 #include <gtest/gtest.h>
+#include <maliput/api/rules/compare.h>
 #include <maliput/api/rules/traffic_light_book.h>
 #include <maliput/api/rules/traffic_lights.h>
 #include <maliput/common/filesystem.h>
 #include <maliput/math/quaternion.h>
-#include <maliput/test_utilities/rules_test_utilities.h>
-#include <maliput/test_utilities/traffic_lights_compare.h>
 #include <maliput_multilane/builder.h>
 #include <maliput_multilane/loader.h>
+
+#include "assert_compare.h"
 
 namespace maliput {
 namespace {
@@ -58,6 +59,8 @@ using api::rules::BulbType;
 using api::rules::TrafficLight;
 using api::rules::TrafficLightBook;
 using api::rules::UniqueBulbId;
+using maliput::api::rules::IsEqual;
+using maliput::test::AssertCompare;
 
 static constexpr char kMultilaneResourcesPath[] = DEF_MULTILANE_RESOURCES;
 
@@ -99,7 +102,7 @@ TEST_F(TestLoading2x2IntersectionTrafficLightbook, LoadFromFile) {
   EXPECT_NE(book, nullptr);
   const TrafficLight* south_facing = book->GetTrafficLight(TrafficLight::Id("SouthFacing"));
   EXPECT_NE(south_facing, nullptr);
-  EXPECT_TRUE(MALIPUT_IS_EQUAL(south_facing, south_facing_.get()));
+  EXPECT_TRUE(AssertCompare(IsEqual(south_facing, south_facing_.get())));
   for (const auto& name : {"NorthFacing", "EastFacing", "WestFacing"}) {
     EXPECT_NE(book->GetTrafficLight(TrafficLight::Id(name)), nullptr);
   }

@@ -40,6 +40,7 @@
 #include <maliput/api/lane.h>
 #include <maliput/api/regions.h>
 #include <maliput/api/road_geometry.h>
+#include <maliput/api/rules/compare.h>
 #include <maliput/api/rules/discrete_value_rule.h>
 #include <maliput/api/rules/range_value_rule.h>
 #include <maliput/api/rules/right_of_way_rule.h>
@@ -50,12 +51,10 @@
 #include <maliput/base/traffic_light_book_loader.h>
 #include <maliput/common/filesystem.h>
 #include <maliput/test_utilities/mock.h>
-#include <maliput/test_utilities/rules_compare.h>
-#include <maliput/test_utilities/rules_direction_usage_compare.h>
-#include <maliput/test_utilities/rules_right_of_way_compare.h>
-#include <maliput/test_utilities/rules_test_utilities.h>
 #include <maliput_multilane/builder.h>
 #include <maliput_multilane/loader.h>
+
+#include "assert_compare.h"
 
 namespace maliput {
 namespace {
@@ -70,11 +69,13 @@ using maliput::api::UniqueId;
 using maliput::api::rules::BulbGroup;
 using maliput::api::rules::DirectionUsageRule;
 using maliput::api::rules::DiscreteValueRule;
+using maliput::api::rules::IsEqual;
 using maliput::api::rules::RangeValueRule;
 using maliput::api::rules::RightOfWayRule;
 using maliput::api::rules::Rule;
 using maliput::api::rules::TrafficLight;
 using maliput::api::rules::UniqueBulbGroupId;
+using maliput::test::AssertCompare;
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
@@ -349,7 +350,7 @@ TEST_F(TestLoading2x2IntersectionRules, LoadFromFile) {
 
     for (const auto& test_case : test_cases) {
       const RightOfWayRule rule = rulebook->GetRule(test_case.id());
-      EXPECT_TRUE(MALIPUT_IS_EQUAL(rule, test_case));
+      EXPECT_TRUE(AssertCompare(IsEqual(rule, test_case)));
       VerifyDiscreteValueRuleEquivalents(rulebook.get(), rule);
       EvaluateRelatedBulbGroups(rule, traffic_light_book.get());
     }
@@ -360,7 +361,7 @@ TEST_F(TestLoading2x2IntersectionRules, LoadFromFile) {
     std::vector<DirectionUsageRule> direction_usage_cases = CreateDirectionUsageRules();
     for (const auto& test_case : direction_usage_cases) {
       const DirectionUsageRule rule = rulebook->GetRule(test_case.id());
-      EXPECT_TRUE(MALIPUT_IS_EQUAL(rule, test_case));
+      EXPECT_TRUE(AssertCompare(IsEqual(rule, test_case)));
     }
   }
 }
@@ -478,16 +479,14 @@ TEST_F(TestLoadingRulesFromYaml, LoadFromFile) {
     const std::map<DiscreteValueRule::Id, DiscreteValueRule> ids_discrete_value_rules = rules.discrete_value_rules;
     EXPECT_EQ(ids_discrete_value_rules.size(), expected_discrete_rules.size());
     for (const auto& id_discrete_value_rule : ids_discrete_value_rules) {
-      const auto it =
-          std::find_if(expected_discrete_rules.begin(), expected_discrete_rules.end(),
-                       [id_discrete_value_rule](api::rules::DiscreteValueRule expected_discrete_rule) {
-                         return api::rules::test::IsEqual("DiscreteValueRule", "Expected DiscreteValueRule",
-                                                          id_discrete_value_rule.second,
-                                                          expected_discrete_rule) == testing::AssertionSuccess();
-                         return api::rules::test::IsEqual(
-                                    "DiscreteValues", "Expected DiscreteValues", id_discrete_value_rule.second.states(),
-                                    expected_discrete_rule.states()) == testing::AssertionSuccess();
-                       });
+      const auto it = std::find_if(
+          expected_discrete_rules.begin(), expected_discrete_rules.end(),
+          [id_discrete_value_rule](api::rules::DiscreteValueRule expected_discrete_rule) {
+            return AssertCompare(IsEqual(id_discrete_value_rule.second, expected_discrete_rule)) ==
+                   testing::AssertionSuccess();
+            return AssertCompare(IsEqual(id_discrete_value_rule.second.states(), expected_discrete_rule.states())) ==
+                   testing::AssertionSuccess();
+          });
       EXPECT_NE(it, expected_discrete_rules.end());
     }
   }
@@ -499,10 +498,10 @@ TEST_F(TestLoadingRulesFromYaml, LoadFromFile) {
       const auto it = std::find_if(
           expected_range_rules.begin(), expected_range_rules.end(),
           [id_range_value_rule](api::rules::RangeValueRule expected_range_rule) {
-            return api::rules::test::IsEqual("RangeValueRule", "Expected RangeValueRule", id_range_value_rule.second,
-                                             expected_range_rule) == testing::AssertionSuccess();
-            return api::rules::test::IsEqual("RangeValues", "Expected RangeValues", id_range_value_rule.second.states(),
-                                             expected_range_rule.states()) == testing::AssertionSuccess();
+            return AssertCompare(IsEqual(id_range_value_rule.second, expected_range_rule)) ==
+                   testing::AssertionSuccess();
+            return AssertCompare(IsEqual(id_range_value_rule.second.states(), expected_range_rule.states())) ==
+                   testing::AssertionSuccess();
           });
       EXPECT_NE(it, expected_range_rules.end());
     }
