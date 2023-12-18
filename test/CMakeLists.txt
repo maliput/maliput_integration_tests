@@ -15,6 +15,7 @@ macro(add_dependencies_to_test target)
         maliput_dragway::maliput_dragway
         maliput_dragway::maliput_dragway_test_utilities
         maliput_malidrive::builder
+        maliput_malidrive::loader
         maliput_multilane::maliput_multilane
         maliput_multilane::test_utilities)
 

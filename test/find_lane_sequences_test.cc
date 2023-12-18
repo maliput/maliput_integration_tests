@@ -39,6 +39,9 @@
 #include <maliput/api/road_geometry.h>
 #include <maliput/common/filesystem.h>
 #include <maliput_dragway_test_utilities/fixtures.h>
+#include <maliput_malidrive/builder/params.h>
+#include <maliput_malidrive/builder/road_network_builder.h>
+#include <maliput_malidrive/loader/loader.h>
 #include <maliput_multilane/builder.h>
 #include <maliput_multilane/loader.h>
 #include <maliput_multilane_test_utilities/fixtures.h>
@@ -178,6 +181,55 @@ GTEST_TEST(FindLaneSequencesTest, MaxLengthOmitsStartAndEndLanes) {
   ASSERT_EQ(FindLaneSequences(start_lane, end_lane, middle_lane->length()).size(), 1u);
   const double total_length = start_lane->length() + middle_lane->length() + end_lane->length();
   ASSERT_EQ(FindLaneSequences(start_lane, end_lane, total_length).size(), 1u);
+}
+
+static constexpr char kMalidriveResourcesPath[] = DEF_MALIDRIVE_RESOURCES;
+
+// Loads TShapeRoad, and evaluates FindLaneSequences() for a large distance that will not
+// filter out results, and shows the behavior when removing and leaving U-turns.
+class TShapeRoadFindLaneSequencesTest : public ::testing::Test {
+ public:
+  //@{  Tolerances set to match the involved geometries and the parser resolution.
+  static constexpr double kLinearTolerance{1e-6};
+  static constexpr double kAngularTolerance{1e-6};
+  static constexpr double kScaleLength{1.0};
+  static constexpr double kDistance{std::numeric_limits<double>::max()};
+  static constexpr bool kDontRemoveUTurns{false};
+  static constexpr bool kRemoveUTurns{true};
+  //@}
+  const std::string kTShapeRoadFilePath{std::string(kMalidriveResourcesPath) +
+                                        std::string("/resources/odr/TShapeRoad.xodr")};
+
+  const api::LaneId kStartLaneId{"1_0_1"};
+  const api::LaneId kEndLaneId{"0_0_1"};
+  const Lane* start_lane_;
+  const Lane* end_lane_;
+
+  void SetUp() override {
+    std::map<std::string, std::string> configuration;
+    configuration.emplace(malidrive::builder::params::kRoadGeometryId, "malidrive_rg");
+    configuration.emplace(malidrive::builder::params::kOpendriveFile, kTShapeRoadFilePath);
+    configuration.emplace(malidrive::builder::params::kLinearTolerance, std::to_string(kLinearTolerance));
+    configuration.emplace(malidrive::builder::params::kAngularTolerance, std::to_string(kAngularTolerance));
+    configuration.emplace(malidrive::builder::params::kScaleLength, std::to_string(kScaleLength));
+    configuration.emplace(malidrive::builder::params::kInertialToBackendFrameTranslation, "{0., 0., 0.}");
+    road_network_ = malidrive::loader::Load<malidrive::builder::RoadNetworkBuilder>(configuration);
+    start_lane_ = road_network_->road_geometry()->ById().GetLane(kStartLaneId);
+    end_lane_ = road_network_->road_geometry()->ById().GetLane(kEndLaneId);
+  }
+
+  std::unique_ptr<api::RoadNetwork> road_network_{};
+};
+
+TEST_F(TShapeRoadFindLaneSequencesTest, NotRemovingUTurnYieldsTwoSequences) {
+  CheckSequences(
+      FindLaneSequences(start_lane_, end_lane_, kDistance, kDontRemoveUTurns),
+      {{"1_0_1", "6_0_-1", "2_0_1", "9_0_-1", "0_0_-1", "5_0_-1", "1_0_-1", "7_0_-1", "2_0_-1", "8_0_-1", "0_0_1"},
+       {"1_0_1", "4_0_1", "0_0_1"}});
+}
+
+TEST_F(TShapeRoadFindLaneSequencesTest, RemovingUTurnYieldsOneSequence) {
+  CheckSequences(FindLaneSequences(start_lane_, end_lane_, kDistance, kRemoveUTurns), {{"1_0_1", "4_0_1", "0_0_1"}});
 }
 
 }  // namespace routing
