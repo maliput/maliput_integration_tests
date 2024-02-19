@@ -1,6 +1,6 @@
 // BSD 3-Clause License
 //
-// Copyright (c) 2023, Woven by Toyota. All rights reserved.
+// Copyright (c) 2024, Woven by Toyota. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are met:
@@ -114,7 +114,7 @@ class TShapeRoadRoutingTest : public ::testing::Test {
     road_network_configuration.emplace(malidrive::builder::params::kInertialToBackendFrameTranslation, "{0., 0., 0.}");
     road_network_ = malidrive::loader::Load<malidrive::builder::RoadNetworkBuilder>(road_network_configuration);
 
-    dut_ = std::make_unique<maliput::DistanceRouter>(road_network_.get(), kLinearTolerance);
+    dut_ = std::make_unique<maliput::DistanceRouter>(*road_network_, kLinearTolerance);
   }
 };
 
