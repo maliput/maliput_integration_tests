@@ -155,7 +155,7 @@ TEST_F(SinglePhaseTest, SinglePhaseWithTwoLanesAndStartPositionsIsNotConnectedEn
 
   const std::vector<std::string> errors = dut.ValidateEndToEndConnectivity();
 
-  ASSERT_FALSE(errors.empty());
+  ASSERT_FALSE(errors.empty()) << SerializeErrors(errors);
 }
 
 TEST_F(SinglePhaseTest, SinglePhaseWithTwoLanesAndEndPositionsIsNotConnectedEndToEnd) {
@@ -170,7 +170,7 @@ TEST_F(SinglePhaseTest, SinglePhaseWithTwoLanesAndEndPositionsIsNotConnectedEndT
 
   const std::vector<std::string> errors = dut.ValidateEndToEndConnectivity();
 
-  ASSERT_FALSE(errors.empty());
+  ASSERT_FALSE(errors.empty()) << SerializeErrors(errors);
 }
 
 class MultiPhaseTest : public MultipleStraightSegmentsTest {};
@@ -208,7 +208,7 @@ TEST_F(MultiPhaseTest, MultiPhaseWithOneLaneEachIsNotGeometricallyConnectedEndTo
 
   const std::vector<std::string> errors = dut.ValidateEndToEndConnectivity();
 
-  ASSERT_FALSE(errors.empty());
+  ASSERT_FALSE(errors.empty()) << SerializeErrors(errors);
 }
 
 TEST_F(MultiPhaseTest, MultiPhaseWithOneLaneEachIsNotTopologicallyConnectedEndToEnd) {
@@ -226,7 +226,7 @@ TEST_F(MultiPhaseTest, MultiPhaseWithOneLaneEachIsNotTopologicallyConnectedEndTo
 
   const std::vector<std::string> errors = dut.ValidateEndToEndConnectivity();
 
-  ASSERT_FALSE(errors.empty());
+  ASSERT_FALSE(errors.empty()) << SerializeErrors(errors);
 }
 
 TEST_F(MultiPhaseTest, MultiPhaseWithDifferrentNumberOfPositionsAtInterfaceIsNotConnectedEndToEnd) {
@@ -247,7 +247,7 @@ TEST_F(MultiPhaseTest, MultiPhaseWithDifferrentNumberOfPositionsAtInterfaceIsNot
 
   const std::vector<std::string> errors = dut.ValidateEndToEndConnectivity();
 
-  ASSERT_FALSE(errors.empty());
+  ASSERT_FALSE(errors.empty()) << SerializeErrors(errors);
 }
 
 TEST_F(MultiPhaseTest, MultiPhaseWithinSameLaneIsConnectedEndToEnd) {
@@ -283,7 +283,7 @@ TEST_F(MultiPhaseTest, MultiPhaseWithinSameLaneIsNotGeometricallyConnectedEndToE
 
   const std::vector<std::string> errors = dut.ValidateEndToEndConnectivity();
 
-  ASSERT_FALSE(errors.empty());
+  ASSERT_FALSE(errors.empty()) << SerializeErrors(errors);
 }
 
 }  // namespace
