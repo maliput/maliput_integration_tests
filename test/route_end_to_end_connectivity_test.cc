@@ -72,7 +72,7 @@ std::string SerializeErrors(const std::vector<std::string>& errors) {
 }
 
 class MultipleStraightSegmentsTest : public ::testing::Test {
- public:
+ protected:
   //@{  Tolerances set to match the involved geometries and the parser resolution.
   static constexpr double kLinearTolerance{1e-6};
   static constexpr double kAngularTolerance{1e-6};
@@ -85,12 +85,6 @@ class MultipleStraightSegmentsTest : public ::testing::Test {
   const api::LaneId kLane_1_0_m1{"1_0_-1"};
   const api::LaneId kLane_2_0_1{"2_0_1"};
   const api::LaneId kLane_2_0_m1{"2_0_-1"};
-  const api::Lane* lane_1_0_1;
-  const api::Lane* lane_1_0_m1;
-  const api::Lane* lane_2_0_1;
-  const api::Lane* lane_2_0_m1;
-
-  std::unique_ptr<api::RoadNetwork> road_network_{};
 
   void SetUp() override {
     std::map<std::string, std::string> road_network_configuration;
@@ -102,23 +96,29 @@ class MultipleStraightSegmentsTest : public ::testing::Test {
     road_network_configuration.emplace(malidrive::builder::params::kScaleLength, std::to_string(kScaleLength));
     road_network_configuration.emplace(malidrive::builder::params::kInertialToBackendFrameTranslation, "{0., 0., 0.}");
     road_network_ = malidrive::loader::Load<malidrive::builder::RoadNetworkBuilder>(road_network_configuration);
-    lane_1_0_1 = road_network_->road_geometry()->ById().GetLane(kLane_1_0_1);
-    lane_1_0_m1 = road_network_->road_geometry()->ById().GetLane(kLane_1_0_m1);
-    lane_2_0_1 = road_network_->road_geometry()->ById().GetLane(kLane_2_0_1);
-    lane_2_0_m1 = road_network_->road_geometry()->ById().GetLane(kLane_2_0_m1);
+    lane_1_0_1_ = road_network_->road_geometry()->ById().GetLane(kLane_1_0_1);
+    lane_1_0_m1_ = road_network_->road_geometry()->ById().GetLane(kLane_1_0_m1);
+    lane_2_0_1_ = road_network_->road_geometry()->ById().GetLane(kLane_2_0_1);
+    lane_2_0_m1_ = road_network_->road_geometry()->ById().GetLane(kLane_2_0_m1);
 
-    ASSERT_NE(nullptr, lane_1_0_1);
-    ASSERT_NE(nullptr, lane_1_0_m1);
-    ASSERT_NE(nullptr, lane_2_0_1);
-    ASSERT_NE(nullptr, lane_2_0_m1);
+    ASSERT_NE(nullptr, lane_1_0_1_);
+    ASSERT_NE(nullptr, lane_1_0_m1_);
+    ASSERT_NE(nullptr, lane_2_0_1_);
+    ASSERT_NE(nullptr, lane_2_0_m1_);
   }
+
+  const api::Lane* lane_1_0_1_{};
+  const api::Lane* lane_1_0_m1_{};
+  const api::Lane* lane_2_0_1_{};
+  const api::Lane* lane_2_0_m1_{};
+  std::unique_ptr<api::RoadNetwork> road_network_{};
 };
 
 class SinglePhaseTest : public MultipleStraightSegmentsTest {};
 
 TEST_F(SinglePhaseTest, SinglePhaseWithOneLaneIsConnectedEndToEnd) {
-  const api::RoadPosition start_position{lane_1_0_1, api::LanePosition{0., 0., 0.}};
-  const api::RoadPosition end_position{lane_1_0_1, api::LanePosition{kLaneLength, 0., 0.}};
+  const api::RoadPosition start_position{lane_1_0_1_, api::LanePosition{0., 0., 0.}};
+  const api::RoadPosition end_position{lane_1_0_1_, api::LanePosition{kLaneLength, 0., 0.}};
   const api::LaneSRange lane_s_range(kLane_1_0_1, api::SRange(0, kLaneLength));
   const routing::Phase phase(0 /*index*/, kLinearTolerance, {start_position}, {end_position}, {lane_s_range},
                              road_network_.get());
@@ -130,8 +130,8 @@ TEST_F(SinglePhaseTest, SinglePhaseWithOneLaneIsConnectedEndToEnd) {
 }
 
 TEST_F(SinglePhaseTest, SinglePhaseWithTwoLanesIsConnectedEndToEnd) {
-  const api::RoadPosition start_position{lane_1_0_1, api::LanePosition{0., 0., 0.}};
-  const api::RoadPosition end_position{lane_1_0_1, api::LanePosition{kLaneLength, 0., 0.}};
+  const api::RoadPosition start_position{lane_1_0_1_, api::LanePosition{0., 0., 0.}};
+  const api::RoadPosition end_position{lane_1_0_1_, api::LanePosition{kLaneLength, 0., 0.}};
   const api::LaneSRange lane_s_range_1(kLane_1_0_1, api::SRange(0, kLaneLength));
   const api::LaneSRange lane_s_range_m1(kLane_1_0_m1, api::SRange(0, kLaneLength));
   const routing::Phase phase(0 /*index*/, kLinearTolerance, {start_position}, {end_position},
@@ -143,10 +143,11 @@ TEST_F(SinglePhaseTest, SinglePhaseWithTwoLanesIsConnectedEndToEnd) {
   ASSERT_TRUE(errors.empty()) << SerializeErrors(errors);
 }
 
+// Asserts that the first routing::Phase contains only one start position constraint is checked.
 TEST_F(SinglePhaseTest, SinglePhaseWithTwoLanesAndStartPositionsIsNotConnectedEndToEnd) {
-  const api::RoadPosition start_position_1{lane_1_0_1, api::LanePosition{0., 0., 0.}};
-  const api::RoadPosition start_position_m1{lane_1_0_m1, api::LanePosition{0., 0., 0.}};
-  const api::RoadPosition end_position{lane_1_0_1, api::LanePosition{kLaneLength, 0., 0.}};
+  const api::RoadPosition start_position_1{lane_1_0_1_, api::LanePosition{0., 0., 0.}};
+  const api::RoadPosition start_position_m1{lane_1_0_m1_, api::LanePosition{0., 0., 0.}};
+  const api::RoadPosition end_position{lane_1_0_1_, api::LanePosition{kLaneLength, 0., 0.}};
   const api::LaneSRange lane_s_range_1(kLane_1_0_1, api::SRange(0, kLaneLength));
   const api::LaneSRange lane_s_range_m1(kLane_1_0_m1, api::SRange(0, kLaneLength));
   const routing::Phase phase(0 /*index*/, kLinearTolerance, {start_position_1, start_position_m1}, {end_position},
@@ -158,10 +159,11 @@ TEST_F(SinglePhaseTest, SinglePhaseWithTwoLanesAndStartPositionsIsNotConnectedEn
   ASSERT_FALSE(errors.empty()) << SerializeErrors(errors);
 }
 
+// Asserts that the last routing::Phase contains only one end position constraint is checked.
 TEST_F(SinglePhaseTest, SinglePhaseWithTwoLanesAndEndPositionsIsNotConnectedEndToEnd) {
-  const api::RoadPosition start_position{lane_1_0_1, api::LanePosition{0., 0., 0.}};
-  const api::RoadPosition end_position_1{lane_1_0_1, api::LanePosition{kLaneLength, 0., 0.}};
-  const api::RoadPosition end_position_m1{lane_1_0_m1, api::LanePosition{kLaneLength, 0., 0.}};
+  const api::RoadPosition start_position{lane_1_0_1_, api::LanePosition{0., 0., 0.}};
+  const api::RoadPosition end_position_1{lane_1_0_1_, api::LanePosition{kLaneLength, 0., 0.}};
+  const api::RoadPosition end_position_m1{lane_1_0_m1_, api::LanePosition{kLaneLength, 0., 0.}};
   const api::LaneSRange lane_s_range_1(kLane_1_0_1, api::SRange(0, kLaneLength));
   const api::LaneSRange lane_s_range_m1(kLane_1_0_m1, api::SRange(0, kLaneLength));
   const routing::Phase phase(0 /*index*/, kLinearTolerance, {start_position}, {end_position_1, end_position_m1},
@@ -176,13 +178,13 @@ TEST_F(SinglePhaseTest, SinglePhaseWithTwoLanesAndEndPositionsIsNotConnectedEndT
 class MultiPhaseTest : public MultipleStraightSegmentsTest {};
 
 TEST_F(MultiPhaseTest, MultiPhaseWithOneLaneEachIsConnectedEndToEnd) {
-  const api::RoadPosition first_start_position{lane_1_0_1, api::LanePosition{0., 0., 0.}};
-  const api::RoadPosition first_end_position{lane_1_0_1, api::LanePosition{kLaneLength, 0., 0.}};
+  const api::RoadPosition first_start_position{lane_1_0_1_, api::LanePosition{0., 0., 0.}};
+  const api::RoadPosition first_end_position{lane_1_0_1_, api::LanePosition{kLaneLength, 0., 0.}};
   const api::LaneSRange first_lane_s_range(kLane_1_0_1, api::SRange(0, kLaneLength));
   const routing::Phase first_phase(0 /*index*/, kLinearTolerance, {first_start_position}, {first_end_position},
                                    {first_lane_s_range}, road_network_.get());
-  const api::RoadPosition last_start_position{lane_2_0_1, api::LanePosition{0., 0., 0.}};
-  const api::RoadPosition last_end_position{lane_2_0_1, api::LanePosition{kLaneLength, 0., 0.}};
+  const api::RoadPosition last_start_position{lane_2_0_1_, api::LanePosition{0., 0., 0.}};
+  const api::RoadPosition last_end_position{lane_2_0_1_, api::LanePosition{kLaneLength, 0., 0.}};
   const api::LaneSRange last_lane_s_range(kLane_2_0_1, api::SRange(0, kLaneLength));
   const routing::Phase last_phase(1 /*index*/, kLinearTolerance, {last_start_position}, {last_end_position},
                                   {last_lane_s_range}, road_network_.get());
@@ -193,14 +195,15 @@ TEST_F(MultiPhaseTest, MultiPhaseWithOneLaneEachIsConnectedEndToEnd) {
   ASSERT_TRUE(errors.empty()) << SerializeErrors(errors);
 }
 
+// Asserts that adjacent routing::Phases have geometrically matching end and start positions constraint is checked.
 TEST_F(MultiPhaseTest, MultiPhaseWithOneLaneEachIsNotGeometricallyConnectedEndToEnd) {
-  const api::RoadPosition first_start_position{lane_1_0_1, api::LanePosition{0., 0., 0.}};
-  const api::RoadPosition first_end_position{lane_1_0_1, api::LanePosition{kLaneLength, 0., 0.}};
+  const api::RoadPosition first_start_position{lane_1_0_1_, api::LanePosition{0., 0., 0.}};
+  const api::RoadPosition first_end_position{lane_1_0_1_, api::LanePosition{kLaneLength, 0., 0.}};
   const api::LaneSRange first_lane_s_range(kLane_1_0_1, api::SRange(0, kLaneLength));
   const routing::Phase first_phase(0 /*index*/, kLinearTolerance, {first_start_position}, {first_end_position},
                                    {first_lane_s_range}, road_network_.get());
-  const api::RoadPosition last_start_position{lane_2_0_1, api::LanePosition{10., 0., 0.}};
-  const api::RoadPosition last_end_position{lane_2_0_1, api::LanePosition{kLaneLength, 0., 0.}};
+  const api::RoadPosition last_start_position{lane_2_0_1_, api::LanePosition{10., 0., 0.}};
+  const api::RoadPosition last_end_position{lane_2_0_1_, api::LanePosition{kLaneLength, 0., 0.}};
   const api::LaneSRange last_lane_s_range(kLane_2_0_1, api::SRange(10., kLaneLength));
   const routing::Phase last_phase(1 /*index*/, kLinearTolerance, {last_start_position}, {last_end_position},
                                   {last_lane_s_range}, road_network_.get());
@@ -211,14 +214,16 @@ TEST_F(MultiPhaseTest, MultiPhaseWithOneLaneEachIsNotGeometricallyConnectedEndTo
   ASSERT_FALSE(errors.empty()) << SerializeErrors(errors);
 }
 
+// Asserts that adjacent routing::Phases have topologically connected end and start positions by inspecting
+// the api::BranchPoint associations constraint is checked.
 TEST_F(MultiPhaseTest, MultiPhaseWithOneLaneEachIsNotTopologicallyConnectedEndToEnd) {
-  const api::RoadPosition first_start_position{lane_1_0_1, api::LanePosition{0., 0., 0.}};
-  const api::RoadPosition first_end_position{lane_1_0_1, api::LanePosition{kLaneLength, 0., 0.}};
+  const api::RoadPosition first_start_position{lane_1_0_1_, api::LanePosition{0., 0., 0.}};
+  const api::RoadPosition first_end_position{lane_1_0_1_, api::LanePosition{kLaneLength, 0., 0.}};
   const api::LaneSRange first_lane_s_range(kLane_1_0_1, api::SRange(0, kLaneLength));
   const routing::Phase first_phase(0 /*index*/, kLinearTolerance, {first_start_position}, {first_end_position},
                                    {first_lane_s_range}, road_network_.get());
-  const api::RoadPosition last_start_position{lane_2_0_m1, api::LanePosition{0., 0., 0.}};
-  const api::RoadPosition last_end_position{lane_2_0_m1, api::LanePosition{kLaneLength, 0., 0.}};
+  const api::RoadPosition last_start_position{lane_2_0_m1_, api::LanePosition{0., 0., 0.}};
+  const api::RoadPosition last_end_position{lane_2_0_m1_, api::LanePosition{kLaneLength, 0., 0.}};
   const api::LaneSRange last_lane_s_range(kLane_2_0_m1, api::SRange(0., kLaneLength));
   const routing::Phase last_phase(1 /*index*/, kLinearTolerance, {last_start_position}, {last_end_position},
                                   {last_lane_s_range}, road_network_.get());
@@ -229,15 +234,16 @@ TEST_F(MultiPhaseTest, MultiPhaseWithOneLaneEachIsNotTopologicallyConnectedEndTo
   ASSERT_FALSE(errors.empty()) << SerializeErrors(errors);
 }
 
-TEST_F(MultiPhaseTest, MultiPhaseWithDifferrentNumberOfPositionsAtInterfaceIsNotConnectedEndToEnd) {
-  const api::RoadPosition first_start_position{lane_1_0_1, api::LanePosition{0., 0., 0.}};
-  const api::RoadPosition first_end_position{lane_1_0_1, api::LanePosition{kLaneLength, 0., 0.}};
+// Asserts that adjacent routing::Phases have the same number of end and start positions constraint is checked.
+TEST_F(MultiPhaseTest, MultiPhaseWithDifferentNumberOfPositionsAtInterfaceIsNotConnectedEndToEnd) {
+  const api::RoadPosition first_start_position{lane_1_0_1_, api::LanePosition{0., 0., 0.}};
+  const api::RoadPosition first_end_position{lane_1_0_1_, api::LanePosition{kLaneLength, 0., 0.}};
   const api::LaneSRange first_lane_s_range(kLane_1_0_1, api::SRange(0, kLaneLength));
   const routing::Phase first_phase(0 /*index*/, kLinearTolerance, {first_start_position}, {first_end_position},
                                    {first_lane_s_range}, road_network_.get());
-  const api::RoadPosition last_start_position_1{lane_2_0_1, api::LanePosition{0., 0., 0.}};
-  const api::RoadPosition last_start_position_m1{lane_2_0_m1, api::LanePosition{0., 0., 0.}};
-  const api::RoadPosition last_end_position{lane_2_0_m1, api::LanePosition{kLaneLength, 0., 0.}};
+  const api::RoadPosition last_start_position_1{lane_2_0_1_, api::LanePosition{0., 0., 0.}};
+  const api::RoadPosition last_start_position_m1{lane_2_0_m1_, api::LanePosition{0., 0., 0.}};
+  const api::RoadPosition last_end_position{lane_2_0_m1_, api::LanePosition{kLaneLength, 0., 0.}};
   const api::LaneSRange last_lane_s_range_1(kLane_2_0_1, api::SRange(0., kLaneLength));
   const api::LaneSRange last_lane_s_range_m1(kLane_2_0_m1, api::SRange(0., kLaneLength));
   const routing::Phase last_phase(1 /*index*/, kLinearTolerance, {last_start_position_1, last_start_position_m1},
@@ -251,13 +257,13 @@ TEST_F(MultiPhaseTest, MultiPhaseWithDifferrentNumberOfPositionsAtInterfaceIsNot
 }
 
 TEST_F(MultiPhaseTest, MultiPhaseWithinSameLaneIsConnectedEndToEnd) {
-  const api::RoadPosition first_start_position{lane_1_0_1, api::LanePosition{0., 0., 0.}};
-  const api::RoadPosition first_end_position{lane_1_0_1, api::LanePosition{kLaneLength / 2., 0., 0.}};
+  const api::RoadPosition first_start_position{lane_1_0_1_, api::LanePosition{0., 0., 0.}};
+  const api::RoadPosition first_end_position{lane_1_0_1_, api::LanePosition{kLaneLength / 2., 0., 0.}};
   const api::LaneSRange first_lane_s_range(kLane_1_0_1, api::SRange(0, kLaneLength / 2.));
   const routing::Phase first_phase(0 /*index*/, kLinearTolerance, {first_start_position}, {first_end_position},
                                    {first_lane_s_range}, road_network_.get());
-  const api::RoadPosition last_start_position{lane_1_0_1, api::LanePosition{kLaneLength / 2., 0., 0.}};
-  const api::RoadPosition last_end_position{lane_1_0_1, api::LanePosition{kLaneLength, 0., 0.}};
+  const api::RoadPosition last_start_position{lane_1_0_1_, api::LanePosition{kLaneLength / 2., 0., 0.}};
+  const api::RoadPosition last_end_position{lane_1_0_1_, api::LanePosition{kLaneLength, 0., 0.}};
   const api::LaneSRange last_lane_s_range(kLane_1_0_1, api::SRange(kLaneLength / 2., kLaneLength));
   const routing::Phase last_phase(1 /*index*/, kLinearTolerance, {last_start_position}, {last_end_position},
                                   {last_lane_s_range}, road_network_.get());
@@ -268,14 +274,16 @@ TEST_F(MultiPhaseTest, MultiPhaseWithinSameLaneIsConnectedEndToEnd) {
   ASSERT_TRUE(errors.empty()) << SerializeErrors(errors);
 }
 
+// Asserts that adjacent routing::Phases whose api::LaneSRanges belong to the same api::Lane have end and
+// start geometrically matching positions.
 TEST_F(MultiPhaseTest, MultiPhaseWithinSameLaneIsNotGeometricallyConnectedEndToEnd) {
-  const api::RoadPosition first_start_position{lane_1_0_1, api::LanePosition{0., 0., 0.}};
-  const api::RoadPosition first_end_position{lane_1_0_1, api::LanePosition{kLaneLength / 2., 0., 0.}};
+  const api::RoadPosition first_start_position{lane_1_0_1_, api::LanePosition{0., 0., 0.}};
+  const api::RoadPosition first_end_position{lane_1_0_1_, api::LanePosition{kLaneLength / 2., 0., 0.}};
   const api::LaneSRange first_lane_s_range(kLane_1_0_1, api::SRange(0, kLaneLength / 2.));
   const routing::Phase first_phase(0 /*index*/, kLinearTolerance, {first_start_position}, {first_end_position},
                                    {first_lane_s_range}, road_network_.get());
-  const api::RoadPosition last_start_position{lane_1_0_1, api::LanePosition{kLaneLength / 2. + 5., 0., 0.}};
-  const api::RoadPosition last_end_position{lane_1_0_1, api::LanePosition{kLaneLength, 0., 0.}};
+  const api::RoadPosition last_start_position{lane_1_0_1_, api::LanePosition{kLaneLength / 2. + 5., 0., 0.}};
+  const api::RoadPosition last_end_position{lane_1_0_1_, api::LanePosition{kLaneLength, 0., 0.}};
   const api::LaneSRange last_lane_s_range(kLane_1_0_1, api::SRange(kLaneLength / 2. + 5., kLaneLength));
   const routing::Phase last_phase(1 /*index*/, kLinearTolerance, {last_start_position}, {last_end_position},
                                   {last_lane_s_range}, road_network_.get());
