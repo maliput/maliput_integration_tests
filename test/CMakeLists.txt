@@ -42,6 +42,7 @@ file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/data/StackedBranchPointsObjContent.obj DES
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/resources/odr/MultipleStraightSegments.xodr DESTINATION ${TEST_PATH})
 
 ament_add_gtest(derive_lane_s_routes_test derive_lane_s_routes_test.cc)
+ament_add_gtest(distance_router_test distance_router_test.cc)
 ament_add_gtest(find_lane_sequences_test find_lane_sequences_test.cc)
 ament_add_gtest(generate_obj_test generate_obj_test.cc WORKING_DIRECTORY ${TEST_PATH})
 ament_add_gtest(generate_string_test generate_string_test.cc)
@@ -56,6 +57,7 @@ ament_add_gtest(traffic_light_book_loader_test traffic_light_book_loader_test.cc
 ament_add_gtest(waypoints_test waypoints_test.cc)
 
 add_dependencies_to_test(derive_lane_s_routes_test)
+add_dependencies_to_test(distance_router_test)
 add_dependencies_to_test(find_lane_sequences_test)
 add_dependencies_to_test(generate_obj_test)
 add_dependencies_to_test(generate_string_test)
