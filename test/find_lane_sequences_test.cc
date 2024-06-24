@@ -29,6 +29,7 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "maliput/routing/find_lane_sequences.h"
 
+#include <limits>
 #include <memory>
 #include <string>
 #include <utility>
@@ -93,6 +94,14 @@ TEST_F(DragwayBasedTest, FindLaneSequencesChangeLanes) {
   CheckSequences(FindLaneSequences(left_lane_, right_lane_, kLength), {});
 }
 
+TEST_F(DragwayBasedTest, FindLaneSequencesChangeLanesWithMaxLength) {
+  constexpr double kMaxLength{std::numeric_limits<double>::max()};
+  CheckSequences(FindLaneSequences(center_lane_, left_lane_, kMaxLength), {});
+  CheckSequences(FindLaneSequences(center_lane_, right_lane_, kMaxLength), {});
+  CheckSequences(FindLaneSequences(right_lane_, left_lane_, kMaxLength), {});
+  CheckSequences(FindLaneSequences(left_lane_, right_lane_, kMaxLength), {});
+}
+
 TEST_F(DragwayBasedTest, FindLaneSequencesSameLane) {
   for (double length : std::vector<double>{kLength, 0.}) {
     CheckSequences(FindLaneSequences(center_lane_, center_lane_, length), {{center_lane_->id().string()}});
@@ -144,6 +153,7 @@ TEST_F(LoopBasedTest, FindLaneSequencesTest) {
   const Lane* start_lane = index_.GetLane(LaneId("l:0_0"));
   const Lane* end_lane = index_.GetLane(LaneId("l:4_0"));
   const std::vector<std::vector<const Lane*>> sequences = FindLaneSequences(start_lane, end_lane, kMaxLength);
+
   ASSERT_EQ(sequences.size(), 5u);
 }
 
