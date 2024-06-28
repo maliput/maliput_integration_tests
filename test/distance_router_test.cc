@@ -63,23 +63,33 @@ static constexpr char kMalidriveResourcesPath[] = DEF_MALIDRIVE_RESOURCES;
 void CheckRoutingPhase(const routing::Phase& phase, int index, double tolerance,
                        const std::vector<api::RoadPosition>& start_pos, const std::vector<api::RoadPosition>& end_pos,
                        const std::vector<api::LaneSRange>& lane_s_ranges) {
-  ASSERT_EQ(index, phase.index());
-  ASSERT_EQ(tolerance, phase.lane_s_range_tolerance());
-  ASSERT_EQ(start_pos.size(), phase.start_positions().size());
+  ASSERT_EQ(index, phase.index()) << "phase " << index << " with indices are not equal.";
+  ASSERT_EQ(tolerance, phase.lane_s_range_tolerance()) << "phase " << index << " with tolerances are not equal.";
+  ASSERT_EQ(start_pos.size(), phase.start_positions().size())
+      << "phase " << index << " with start position sizes are not equal.";
   for (size_t i = 0; i < start_pos.size(); ++i) {
-    ASSERT_EQ(start_pos[i].lane, phase.start_positions()[i].lane);
-    ASSERT_TRUE(AssertCompare(IsLanePositionClose(start_pos[i].pos, phase.start_positions()[i].pos, tolerance)));
+    ASSERT_EQ(start_pos[i].lane, phase.start_positions()[i].lane)
+        << "phase " << index << " with index " << i << " with mismatched RoadPositions.";
+    ASSERT_TRUE(AssertCompare(IsLanePositionClose(start_pos[i].pos, phase.start_positions()[i].pos, tolerance)))
+        << "phase " << index << " with index " << i << " with mismatched RoadPositions.";
   }
-  ASSERT_EQ(end_pos.size(), phase.end_positions().size());
+  ASSERT_EQ(end_pos.size(), phase.end_positions().size())
+      << "phase " << index << " with end position sizes are not equal.";
   for (size_t i = 0; i < start_pos.size(); ++i) {
-    ASSERT_EQ(end_pos[i].lane, phase.end_positions()[i].lane);
-    ASSERT_TRUE(AssertCompare(IsLanePositionClose(end_pos[i].pos, phase.end_positions()[i].pos, tolerance)));
+    ASSERT_EQ(end_pos[i].lane, phase.end_positions()[i].lane)
+        << "phase " << index << " with index " << i << " with mismatched RoadPositions.";
+    ASSERT_TRUE(AssertCompare(IsLanePositionClose(end_pos[i].pos, phase.end_positions()[i].pos, tolerance)))
+        << "phase " << index << " with index " << i << " with mismatched RoadPositions.";
   }
-  ASSERT_EQ(lane_s_ranges.size(), phase.lane_s_ranges().size());
+  ASSERT_EQ(lane_s_ranges.size(), phase.lane_s_ranges().size())
+      << "phase " << index << " with LaneSRanges sizes are not equal.";
   for (size_t i = 0; i < lane_s_ranges.size(); ++i) {
-    ASSERT_EQ(lane_s_ranges[i].lane_id().string(), phase.lane_s_ranges()[i].lane_id().string());
-    ASSERT_NEAR(lane_s_ranges[i].s_range().s0(), phase.lane_s_ranges()[i].s_range().s0(), tolerance);
-    ASSERT_NEAR(lane_s_ranges[i].s_range().s1(), phase.lane_s_ranges()[i].s_range().s1(), tolerance);
+    ASSERT_EQ(lane_s_ranges[i].lane_id().string(), phase.lane_s_ranges()[i].lane_id().string())
+        << "phase " << index << " with index " << i << " with mismatched LaneIds.";
+    ASSERT_NEAR(lane_s_ranges[i].s_range().s0(), phase.lane_s_ranges()[i].s_range().s0(), tolerance)
+        << "phase " << index << " with index " << i << " with mismatched SRange::s0.";
+    ASSERT_NEAR(lane_s_ranges[i].s_range().s1(), phase.lane_s_ranges()[i].s_range().s1(), tolerance)
+        << "phase " << index << " with index " << i << " with mismatched SRange::s1.";
   }
 }
 
@@ -99,9 +109,12 @@ class TShapeRoadRoutingTest : public ::testing::Test {
   };
   const std::string kTShapeRoadFilePath{std::string(kMalidriveResourcesPath) +
                                         std::string("/resources/odr/TShapeRoad.xodr")};
-
-  std::unique_ptr<api::RoadNetwork> road_network_{};
-  std::unique_ptr<routing::Router> dut_{};
+  const api::LaneId kLaneId_0_0_1{"0_0_1"};
+  const api::LaneId kLaneId_0_0_m1{"0_0_-1"};
+  const api::LaneId kLaneId_1_0_1{"1_0_1"};
+  const api::LaneId kLaneId_1_0_m1{"1_0_-1"};
+  const api::LaneId kLaneId_4_0_1{"4_0_1"};
+  const api::LaneId kLaneId_5_0_m1{"5_0_-1"};
 
   void SetUp() override {
     std::map<std::string, std::string> road_network_configuration;
@@ -115,23 +128,39 @@ class TShapeRoadRoutingTest : public ::testing::Test {
     road_network_ = malidrive::loader::Load<malidrive::builder::RoadNetworkBuilder>(road_network_configuration);
 
     dut_ = std::make_unique<maliput::DistanceRouter>(*road_network_, kLinearTolerance);
+
+    lane_0_0_1_ = road_network_->road_geometry()->ById().GetLane(kLaneId_0_0_1);
+    lane_0_0_m1_ = road_network_->road_geometry()->ById().GetLane(kLaneId_0_0_m1);
+    lane_1_0_1_ = road_network_->road_geometry()->ById().GetLane(kLaneId_1_0_1);
+    lane_1_0_m1_ = road_network_->road_geometry()->ById().GetLane(kLaneId_1_0_m1);
+    lane_4_0_1_ = road_network_->road_geometry()->ById().GetLane(kLaneId_4_0_1);
+    lane_5_0_m1_ = road_network_->road_geometry()->ById().GetLane(kLaneId_5_0_m1);
+
+    ASSERT_NE(lane_0_0_1_, nullptr);
+    ASSERT_NE(lane_0_0_m1_, nullptr);
+    ASSERT_NE(lane_1_0_1_, nullptr);
+    ASSERT_NE(lane_1_0_m1_, nullptr);
+    ASSERT_NE(lane_4_0_1_, nullptr);
+    ASSERT_NE(lane_5_0_m1_, nullptr);
   }
+
+  std::unique_ptr<api::RoadNetwork> road_network_{};
+  std::unique_ptr<routing::Router> dut_{};
+  const api::Lane* lane_0_0_1_{};
+  const api::Lane* lane_0_0_m1_{};
+  const api::Lane* lane_1_0_1_{};
+  const api::Lane* lane_1_0_m1_{};
+  const api::Lane* lane_4_0_1_{};
+  const api::Lane* lane_5_0_m1_{};
 };
 
 // Defines the test cases for the TShapeRoad where the start and end positions are on the very same Lane.
 class RoutingInTheSameLaneTest : public TShapeRoadRoutingTest {
  public:
-  const api::LaneId kStartLaneId{"0_0_1"};
-  const api::LaneId kEndLaneId{"0_0_1"};
-  const api::Lane* start_lane_;
-  const api::Lane* end_lane_;
-
   void SetUp() override {
     TShapeRoadRoutingTest::SetUp();
-    start_lane_ = road_network_->road_geometry()->ById().GetLane(kStartLaneId);
-    end_lane_ = road_network_->road_geometry()->ById().GetLane(kStartLaneId);
-    start_ = api::RoadPosition(start_lane_, api::LanePosition(1., 0., 0.));
-    end_ = api::RoadPosition(end_lane_, api::LanePosition(10., 0., 0.));
+    start_ = api::RoadPosition(lane_0_0_1_, api::LanePosition(1., 0., 0.));
+    end_ = api::RoadPosition(lane_0_0_1_, api::LanePosition(10., 0., 0.));
   }
 
   api::RoadPosition start_;
@@ -140,7 +169,8 @@ class RoutingInTheSameLaneTest : public TShapeRoadRoutingTest {
 
 // No constraints are provided and the only possible route is returned.
 TEST_F(RoutingInTheSameLaneTest, WithDefaultConstraintsReturnsTheLane) {
-  const std::vector<api::LaneSRange> kPhaseLaneSRanges{api::LaneSRange(kStartLaneId, api::SRange(1., 10.))};
+  const std::vector<api::LaneSRange> kPhaseLaneSRanges{api::LaneSRange(kLaneId_0_0_m1, api::SRange(1., 10.)),
+                                                       api::LaneSRange(kLaneId_0_0_1, api::SRange(1., 10.))};
 
   const std::vector<routing::Route> routes = dut_->ComputeRoutes(start_, end_, kDefaultRoutingConstraints);
 
@@ -170,68 +200,96 @@ TEST_F(RoutingInTheSameLaneTest, WithConstrainedRouteCostReturnsEmpty) {
 // three roads aligned in a straight line.
 class DriveBackwardStraightOverMultipleLanesTest : public TShapeRoadRoutingTest {
  public:
-  const api::LaneId kStartLaneId{"1_0_1"};
-  const api::LaneId kIntermediateLaneId{"4_0_1"};
-  const api::LaneId kEndLaneId{"0_0_1"};
-  const std::vector<api::LaneSRange> kPhase0LaneSRanges{api::LaneSRange{kStartLaneId, api::SRange{1., 0.}}};
-  const std::vector<api::LaneSRange> kPhase1LaneSRanges{api::LaneSRange{kIntermediateLaneId, api::SRange{8., 0.}}};
-  const std::vector<api::LaneSRange> kPhase2LaneSRanges{api::LaneSRange{kEndLaneId, api::SRange{46., 10.}}};
-  const api::Lane* start_lane_;
-  const api::Lane* intermediate_lane_;
-  const api::Lane* end_lane_;
+  const std::vector<api::LaneSRange> kRoute0Phase0LaneSRanges{api::LaneSRange{kLaneId_1_0_m1, api::SRange{1., 0.}},
+                                                              api::LaneSRange{kLaneId_1_0_1, api::SRange{1., 0.}}};
+  const std::vector<api::LaneSRange> kRoute0Phase1LaneSRanges{api::LaneSRange{kLaneId_4_0_1, api::SRange{8., 0.}}};
+  const std::vector<api::LaneSRange> kRoute0Phase2LaneSRanges{api::LaneSRange{kLaneId_0_0_m1, api::SRange{46., 10.}},
+                                                              api::LaneSRange{kLaneId_0_0_1, api::SRange{46., 10.}}};
+  const std::vector<api::LaneSRange> kRoute1Phase0LaneSRanges{api::LaneSRange{kLaneId_1_0_m1, api::SRange{1., 0.}},
+                                                              api::LaneSRange{kLaneId_1_0_1, api::SRange{1., 0.}}};
+  const std::vector<api::LaneSRange> kRoute1Phase1LaneSRanges{api::LaneSRange{kLaneId_5_0_m1, api::SRange{8., 0.}}};
+  const std::vector<api::LaneSRange> kRoute1Phase2LaneSRanges{api::LaneSRange{kLaneId_0_0_m1, api::SRange{46., 10.}},
+                                                              api::LaneSRange{kLaneId_0_0_1, api::SRange{46., 10.}}};
 
   void SetUp() override {
     TShapeRoadRoutingTest::SetUp();
-    start_lane_ = road_network_->road_geometry()->ById().GetLane(kStartLaneId);
-    intermediate_lane_ = road_network_->road_geometry()->ById().GetLane(kIntermediateLaneId);
-    end_lane_ = road_network_->road_geometry()->ById().GetLane(kEndLaneId);
-    start_phase_0_ = api::RoadPosition(start_lane_, api::LanePosition(1., 0., 0.));
-    end_phase_0_ = api::RoadPosition(start_lane_, api::LanePosition(0., 0., 0.));
-    start_phase_1_ = api::RoadPosition(intermediate_lane_, api::LanePosition(8., 0., 0.));
-    end_phase_1_ = api::RoadPosition(intermediate_lane_, api::LanePosition(0., 0., 0.));
-    start_phase_2_ = api::RoadPosition(end_lane_, api::LanePosition(46., 0., 0.));
-    end_phase_2_ = api::RoadPosition(end_lane_, api::LanePosition(10., 0., 0.));
+    start_ = api::RoadPosition(lane_1_0_1_, api::LanePosition(1., 0., 0.));
+    end_ = api::RoadPosition(lane_0_0_1_, api::LanePosition(10., 0., 0.));
+    // Route 0
+    route_0_phase_0_start_ = start_;
+    route_0_phase_0_end_ = api::RoadPosition(lane_1_0_1_, api::LanePosition(0., 0., 0.));
+    route_0_phase_1_start_ = api::RoadPosition(lane_4_0_1_, api::LanePosition(8., 0., 0.));
+    route_0_phase_1_end_ = api::RoadPosition(lane_4_0_1_, api::LanePosition(0., 0., 0.));
+    route_0_phase_2_start_ = api::RoadPosition(lane_0_0_1_, api::LanePosition(46., 0., 0.));
+    route_0_phase_2_end_ = end_;
+    // Route 1
+    route_1_phase_0_start_ = start_;
+    route_1_phase_0_end_ = api::RoadPosition(lane_1_0_m1_, api::LanePosition(0., 0., 0.));
+    route_1_phase_1_start_ = api::RoadPosition(lane_5_0_m1_, api::LanePosition(8., 0., 0.));
+    route_1_phase_1_end_ = api::RoadPosition(lane_5_0_m1_, api::LanePosition(0., 0., 0.));
+    route_1_phase_2_start_ = api::RoadPosition(lane_0_0_m1_, api::LanePosition(46., 0., 0.));
+    route_1_phase_2_end_ = end_;
   }
 
-  api::RoadPosition start_phase_0_;
-  api::RoadPosition end_phase_0_;
-  api::RoadPosition start_phase_1_;
-  api::RoadPosition end_phase_1_;
-  api::RoadPosition start_phase_2_;
-  api::RoadPosition end_phase_2_;
+  api::RoadPosition start_;
+  api::RoadPosition end_;
+  api::RoadPosition route_0_phase_0_start_;
+  api::RoadPosition route_0_phase_0_end_;
+  api::RoadPosition route_0_phase_1_start_;
+  api::RoadPosition route_0_phase_1_end_;
+  api::RoadPosition route_0_phase_2_start_;
+  api::RoadPosition route_0_phase_2_end_;
+  api::RoadPosition route_1_phase_0_start_;
+  api::RoadPosition route_1_phase_0_end_;
+  api::RoadPosition route_1_phase_1_start_;
+  api::RoadPosition route_1_phase_1_end_;
+  api::RoadPosition route_1_phase_2_start_;
+  api::RoadPosition route_1_phase_2_end_;
 };
 
 // No constraints are provided and the only possible route is returned.
 TEST_F(DriveBackwardStraightOverMultipleLanesTest, WithDefaultConstraintsReturnsRouteWithThreePhases) {
-  const std::vector<routing::Route> routes =
-      dut_->ComputeRoutes(start_phase_0_, end_phase_2_, kDefaultRoutingConstraints);
+  const std::vector<routing::Route> routes = dut_->ComputeRoutes(start_, end_, kDefaultRoutingConstraints);
 
-  ASSERT_EQ(1u, routes.size());
-  const routing::Route& route = routes[0];
-  ASSERT_EQ(3, route.size());
-  const routing::Phase& phase_0 = route.Get(0);
-  const routing::Phase& phase_1 = route.Get(1);
-  const routing::Phase& phase_2 = route.Get(2);
-  CheckRoutingPhase(phase_0, 0, kLinearTolerance, std::vector<api::RoadPosition>{start_phase_0_},
-                    std::vector<api::RoadPosition>{end_phase_0_}, kPhase0LaneSRanges);
-  CheckRoutingPhase(phase_1, 1, kLinearTolerance, std::vector<api::RoadPosition>{start_phase_1_},
-                    std::vector<api::RoadPosition>{end_phase_1_}, kPhase1LaneSRanges);
-  CheckRoutingPhase(phase_2, 2, kLinearTolerance, std::vector<api::RoadPosition>{start_phase_2_},
-                    std::vector<api::RoadPosition>{end_phase_2_}, kPhase2LaneSRanges);
+  ASSERT_EQ(2u, routes.size());
+  {
+    const routing::Route& route = routes[0];
+    ASSERT_EQ(3, route.size());
+    const routing::Phase& phase_0 = route.Get(0);
+    const routing::Phase& phase_1 = route.Get(1);
+    const routing::Phase& phase_2 = route.Get(2);
+    CheckRoutingPhase(phase_0, 0, kLinearTolerance, std::vector<api::RoadPosition>{route_0_phase_0_start_},
+                      std::vector<api::RoadPosition>{route_0_phase_0_end_}, kRoute0Phase0LaneSRanges);
+    CheckRoutingPhase(phase_1, 1, kLinearTolerance, std::vector<api::RoadPosition>{route_0_phase_1_start_},
+                      std::vector<api::RoadPosition>{route_0_phase_1_end_}, kRoute0Phase1LaneSRanges);
+    CheckRoutingPhase(phase_2, 2, kLinearTolerance, std::vector<api::RoadPosition>{route_0_phase_2_start_},
+                      std::vector<api::RoadPosition>{route_0_phase_2_end_}, kRoute0Phase2LaneSRanges);
+  }
+  {
+    const routing::Route& route = routes[1];
+    ASSERT_EQ(3, route.size());
+    const routing::Phase& phase_0 = route.Get(0);
+    const routing::Phase& phase_1 = route.Get(1);
+    const routing::Phase& phase_2 = route.Get(2);
+    CheckRoutingPhase(phase_0, 0, kLinearTolerance, std::vector<api::RoadPosition>{route_1_phase_0_start_},
+                      std::vector<api::RoadPosition>{route_1_phase_0_end_}, kRoute1Phase0LaneSRanges);
+    CheckRoutingPhase(phase_1, 1, kLinearTolerance, std::vector<api::RoadPosition>{route_1_phase_1_start_},
+                      std::vector<api::RoadPosition>{route_1_phase_1_end_}, kRoute1Phase1LaneSRanges);
+    CheckRoutingPhase(phase_2, 2, kLinearTolerance, std::vector<api::RoadPosition>{route_1_phase_2_start_},
+                      std::vector<api::RoadPosition>{route_1_phase_2_end_}, kRoute1Phase2LaneSRanges);
+  }
 }
 
 // The maximum cost of the phase is smaller than the solution's phase cost, so no routes can be found.
 TEST_F(DriveBackwardStraightOverMultipleLanesTest, WithConstrainedPhaseCostReturnsEmpty) {
-  const std::vector<routing::Route> routes =
-      dut_->ComputeRoutes(start_phase_0_, end_phase_2_, kSmallPhaseCostConstraint);
+  const std::vector<routing::Route> routes = dut_->ComputeRoutes(start_, end_, kSmallPhaseCostConstraint);
 
   ASSERT_TRUE(routes.empty());
 }
 
 // The maximum cost of the route is smaller than the solution's phase cost, so no routes can be found.
 TEST_F(DriveBackwardStraightOverMultipleLanesTest, WithConstrainedRouteCostReturnsEmpty) {
-  const std::vector<routing::Route> routes =
-      dut_->ComputeRoutes(start_phase_0_, end_phase_2_, kSmallRouteCostConstraint);
+  const std::vector<routing::Route> routes = dut_->ComputeRoutes(start_, end_, kSmallRouteCostConstraint);
 
   ASSERT_TRUE(routes.empty());
 }
@@ -240,68 +298,96 @@ TEST_F(DriveBackwardStraightOverMultipleLanesTest, WithConstrainedRouteCostRetur
 // three roads aligned in a straight line.
 class DriveForwardStraightOverMultipleLanesTest : public TShapeRoadRoutingTest {
  public:
-  const api::LaneId kStartLaneId{"0_0_-1"};
-  const api::LaneId kIntermediateLaneId{"5_0_-1"};
-  const api::LaneId kEndLaneId{"1_0_-1"};
-  const std::vector<api::LaneSRange> kPhase0LaneSRanges{api::LaneSRange(kStartLaneId, api::SRange(1., 46.))};
-  const std::vector<api::LaneSRange> kPhase1LaneSRanges{api::LaneSRange(kIntermediateLaneId, api::SRange(0., 8.))};
-  const std::vector<api::LaneSRange> kPhase2LaneSRanges{api::LaneSRange(kEndLaneId, api::SRange(0., 10.))};
-  const api::Lane* start_lane_;
-  const api::Lane* intermediate_lane_;
-  const api::Lane* end_lane_;
+  const std::vector<api::LaneSRange> kRoute0Phase0LaneSRanges{api::LaneSRange{kLaneId_0_0_m1, api::SRange{1., 46.}},
+                                                              api::LaneSRange{kLaneId_0_0_1, api::SRange{1., 46.}}};
+  const std::vector<api::LaneSRange> kRoute0Phase1LaneSRanges{api::LaneSRange{kLaneId_4_0_1, api::SRange{0., 8.}}};
+  const std::vector<api::LaneSRange> kRoute0Phase2LaneSRanges{api::LaneSRange{kLaneId_1_0_m1, api::SRange{0., 10.}},
+                                                              api::LaneSRange{kLaneId_1_0_1, api::SRange{0., 10.}}};
+  const std::vector<api::LaneSRange> kRoute1Phase0LaneSRanges{api::LaneSRange{kLaneId_0_0_m1, api::SRange{1., 46.}},
+                                                              api::LaneSRange{kLaneId_0_0_1, api::SRange{1., 46.}}};
+  const std::vector<api::LaneSRange> kRoute1Phase1LaneSRanges{api::LaneSRange{kLaneId_5_0_m1, api::SRange{0., 8.}}};
+  const std::vector<api::LaneSRange> kRoute1Phase2LaneSRanges{api::LaneSRange{kLaneId_1_0_m1, api::SRange{0., 10.}},
+                                                              api::LaneSRange{kLaneId_1_0_1, api::SRange{0., 10.}}};
 
   void SetUp() override {
     TShapeRoadRoutingTest::SetUp();
-    start_lane_ = road_network_->road_geometry()->ById().GetLane(kStartLaneId);
-    intermediate_lane_ = road_network_->road_geometry()->ById().GetLane(kIntermediateLaneId);
-    end_lane_ = road_network_->road_geometry()->ById().GetLane(kEndLaneId);
-    start_phase_0_ = api::RoadPosition(start_lane_, api::LanePosition(1., 0., 0.));
-    end_phase_0_ = api::RoadPosition(start_lane_, api::LanePosition(46., 0., 0.));
-    start_phase_1_ = api::RoadPosition(intermediate_lane_, api::LanePosition(0., 0., 0.));
-    end_phase_1_ = api::RoadPosition(intermediate_lane_, api::LanePosition(8., 0., 0.));
-    start_phase_2_ = api::RoadPosition(end_lane_, api::LanePosition(0., 0., 0.));
-    end_phase_2_ = api::RoadPosition(end_lane_, api::LanePosition(10., 0., 0.));
+    start_ = api::RoadPosition(lane_0_0_m1_, api::LanePosition(1., 0., 0.));
+    end_ = api::RoadPosition(lane_1_0_m1_, api::LanePosition(10., 0., 0.));
+    // Route 0
+    route_0_phase_0_start_ = start_;
+    route_0_phase_0_end_ = api::RoadPosition(lane_0_0_1_, api::LanePosition(46., 0., 0.));
+    route_0_phase_1_start_ = api::RoadPosition(lane_4_0_1_, api::LanePosition(0., 0., 0.));
+    route_0_phase_1_end_ = api::RoadPosition(lane_4_0_1_, api::LanePosition(8., 0., 0.));
+    route_0_phase_2_start_ = api::RoadPosition(lane_1_0_1_, api::LanePosition(0., 0., 0.));
+    route_0_phase_2_end_ = end_;
+    // Route 1
+    route_1_phase_0_start_ = start_;
+    route_1_phase_0_end_ = api::RoadPosition(lane_0_0_m1_, api::LanePosition(46., 0., 0.));
+    route_1_phase_1_start_ = api::RoadPosition(lane_5_0_m1_, api::LanePosition(0., 0., 0.));
+    route_1_phase_1_end_ = api::RoadPosition(lane_5_0_m1_, api::LanePosition(8., 0., 0.));
+    route_1_phase_2_start_ = api::RoadPosition(lane_1_0_m1_, api::LanePosition(0., 0., 0.));
+    route_1_phase_2_end_ = end_;
   }
 
-  api::RoadPosition start_phase_0_;
-  api::RoadPosition end_phase_0_;
-  api::RoadPosition start_phase_1_;
-  api::RoadPosition end_phase_1_;
-  api::RoadPosition start_phase_2_;
-  api::RoadPosition end_phase_2_;
+  api::RoadPosition start_;
+  api::RoadPosition end_;
+  api::RoadPosition route_0_phase_0_start_;
+  api::RoadPosition route_0_phase_0_end_;
+  api::RoadPosition route_0_phase_1_start_;
+  api::RoadPosition route_0_phase_1_end_;
+  api::RoadPosition route_0_phase_2_start_;
+  api::RoadPosition route_0_phase_2_end_;
+  api::RoadPosition route_1_phase_0_start_;
+  api::RoadPosition route_1_phase_0_end_;
+  api::RoadPosition route_1_phase_1_start_;
+  api::RoadPosition route_1_phase_1_end_;
+  api::RoadPosition route_1_phase_2_start_;
+  api::RoadPosition route_1_phase_2_end_;
 };
 
 // No constraints are provided and the only possible route is returned.
 TEST_F(DriveForwardStraightOverMultipleLanesTest, WithDefaultConstraintsReturnsRouteWithThreePhases) {
-  const std::vector<routing::Route> routes =
-      dut_->ComputeRoutes(start_phase_0_, end_phase_2_, kDefaultRoutingConstraints);
+  const std::vector<routing::Route> routes = dut_->ComputeRoutes(start_, end_, kDefaultRoutingConstraints);
 
-  ASSERT_EQ(1u, routes.size());
-  const routing::Route& route = routes[0];
-  ASSERT_EQ(3, route.size());
-  const routing::Phase& phase_0 = route.Get(0);
-  const routing::Phase& phase_1 = route.Get(1);
-  const routing::Phase& phase_2 = route.Get(2);
-  CheckRoutingPhase(phase_0, 0, kLinearTolerance, std::vector<api::RoadPosition>{start_phase_0_},
-                    std::vector<api::RoadPosition>{end_phase_0_}, kPhase0LaneSRanges);
-  CheckRoutingPhase(phase_1, 1, kLinearTolerance, std::vector<api::RoadPosition>{start_phase_1_},
-                    std::vector<api::RoadPosition>{end_phase_1_}, kPhase1LaneSRanges);
-  CheckRoutingPhase(phase_2, 2, kLinearTolerance, std::vector<api::RoadPosition>{start_phase_2_},
-                    std::vector<api::RoadPosition>{end_phase_2_}, kPhase2LaneSRanges);
+  ASSERT_EQ(2u, routes.size());
+  {
+    const routing::Route& route = routes[0];
+    ASSERT_EQ(3, route.size());
+    const routing::Phase& phase_0 = route.Get(0);
+    const routing::Phase& phase_1 = route.Get(1);
+    const routing::Phase& phase_2 = route.Get(2);
+    CheckRoutingPhase(phase_0, 0, kLinearTolerance, std::vector<api::RoadPosition>{route_0_phase_0_start_},
+                      std::vector<api::RoadPosition>{route_0_phase_0_end_}, kRoute0Phase0LaneSRanges);
+    CheckRoutingPhase(phase_1, 1, kLinearTolerance, std::vector<api::RoadPosition>{route_0_phase_1_start_},
+                      std::vector<api::RoadPosition>{route_0_phase_1_end_}, kRoute0Phase1LaneSRanges);
+    CheckRoutingPhase(phase_2, 2, kLinearTolerance, std::vector<api::RoadPosition>{route_0_phase_2_start_},
+                      std::vector<api::RoadPosition>{route_0_phase_2_end_}, kRoute0Phase2LaneSRanges);
+  }
+  {
+    const routing::Route& route = routes[1];
+    ASSERT_EQ(3, route.size());
+    const routing::Phase& phase_0 = route.Get(0);
+    const routing::Phase& phase_1 = route.Get(1);
+    const routing::Phase& phase_2 = route.Get(2);
+    CheckRoutingPhase(phase_0, 0, kLinearTolerance, std::vector<api::RoadPosition>{route_1_phase_0_start_},
+                      std::vector<api::RoadPosition>{route_1_phase_0_end_}, kRoute1Phase0LaneSRanges);
+    CheckRoutingPhase(phase_1, 1, kLinearTolerance, std::vector<api::RoadPosition>{route_1_phase_1_start_},
+                      std::vector<api::RoadPosition>{route_1_phase_1_end_}, kRoute1Phase1LaneSRanges);
+    CheckRoutingPhase(phase_2, 2, kLinearTolerance, std::vector<api::RoadPosition>{route_1_phase_2_start_},
+                      std::vector<api::RoadPosition>{route_1_phase_2_end_}, kRoute1Phase2LaneSRanges);
+  }
 }
 
 // The maximum cost of the phase is smaller than the solution's phase cost, so no routes can be found.
 TEST_F(DriveForwardStraightOverMultipleLanesTest, WithConstrainedPhaseCostReturnsEmpty) {
-  const std::vector<routing::Route> routes =
-      dut_->ComputeRoutes(start_phase_0_, end_phase_2_, kSmallPhaseCostConstraint);
+  const std::vector<routing::Route> routes = dut_->ComputeRoutes(start_, end_, kSmallPhaseCostConstraint);
 
   ASSERT_TRUE(routes.empty());
 }
 
 // The maximum cost of the route is smaller than the solution's phase cost, so no routes can be found.
 TEST_F(DriveForwardStraightOverMultipleLanesTest, WithConstrainedRouteCostReturnsEmpty) {
-  const std::vector<routing::Route> routes =
-      dut_->ComputeRoutes(start_phase_0_, end_phase_2_, kSmallRouteCostConstraint);
+  const std::vector<routing::Route> routes = dut_->ComputeRoutes(start_, end_, kSmallRouteCostConstraint);
 
   ASSERT_TRUE(routes.empty());
 }
