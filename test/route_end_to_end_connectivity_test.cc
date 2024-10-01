@@ -52,7 +52,7 @@
 // @file This file evaluates the end to end connectivity constraints of a maliput::routing::Route.
 // @details This is not done in maliput because of the need of a concrete maliput::api::RoadGeometry
 // to evaluate all the topological and geometrical constraints. Mocking that for the purposes of
-// this test would require implementing a concrete backend. In this test, an ad-hoc xodr map is used.
+// this test would require implementing a concrete backend. In this test, an ad-hoc OpenDRIVE map is used.
 // We don't need any fancy geometry or network topology, just two roads with two lanes each are enough
 // to validate the end to end connectivity is correct.
 
