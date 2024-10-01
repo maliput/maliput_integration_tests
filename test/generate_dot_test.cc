@@ -26,6 +26,7 @@
 // CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#include <algorithm>
 #include <map>
 #include <memory>
 #include <sstream>
@@ -51,6 +52,19 @@ namespace test {
 namespace {
 
 static constexpr char kMalidriveResourcesPath[] = DEF_MALIDRIVE_RESOURCES;
+
+// Splits @p input by new lines and returns a vector of lines.
+std::vector<std::string> SplitByLines(const std::string& input) {
+  std::vector<std::string> lines;
+  std::stringstream ss(input);
+  std::string line;
+
+  while (std::getline(ss, line)) {
+    lines.push_back(line);
+  }
+
+  return lines;
+}
 
 class TShapeRoadGenerateDotTest : public ::testing::Test {
  public:
@@ -94,9 +108,16 @@ class TShapeRoadGenerateDotTest : public ::testing::Test {
   }
 };
 
+// Using an empty routing::graph::Graph to show that the function throws when the api::Segments from the routing::Route
+// cannot be found in the routing::graph::Edges from the routing::graph::Graph.
+TEST_F(TShapeRoadGenerateDotTest, ThrowsWhenTheSegmentIsNotInGraph) {
+  std::stringstream ss;
+  ASSERT_THROW({ utility::GenerateDotStream(routing::graph::Graph{}, routes_.front(), &ss); }, common::assertion_error);
+}
+
 // Evaluates the graph is correct and the api::Segment containing the routing::Route is marked with the red color.
-TEST_F(TShapeRoadGenerateDotTest, DotGraphWithARouteMarksInRedWhereTheRouteGoesThrough) {
-  const std::string kResult(R"(graph {
+TEST_F(TShapeRoadGenerateDotTest, DotGraphWithRouteHighlightedInRed) {
+  const std::string kExpectedResult(R"(graph {
 1 -- 5 [ label = "9_0" ];
 5 -- 1 [ label = "8_0" ];
 5 -- 2 [ label = "7_0" ];
@@ -108,17 +129,25 @@ TEST_F(TShapeRoadGenerateDotTest, DotGraphWithARouteMarksInRedWhereTheRouteGoesT
 0 -- 1 [ label = "0_0" color = "red" ];
 }
 )");
+  const std::vector<std::string> kExpectedResultInLines = SplitByLines(kExpectedResult);
 
   std::stringstream ss;
-  maliput::utility::GenerateDotStream(graph_, routes_.front(), &ss);
+  utility::GenerateDotStream(graph_, routes_.front(), &ss);
 
-  ASSERT_EQ(kResult, ss.str());
+  const std::vector<std::string> result = SplitByLines(ss.str());
+  ASSERT_EQ(kExpectedResultInLines.size(), result.size());
+  ASSERT_EQ(kExpectedResultInLines.front(), result.front());
+  ASSERT_EQ(kExpectedResultInLines.back(), result.back());
+  for (size_t i = 1; i < result.size() - 1; ++i) {
+    ASSERT_NE(kExpectedResultInLines.end(),
+              std::find(kExpectedResultInLines.begin() + 1, kExpectedResultInLines.end() - 1, result[i]));
+  }
 }
 
 // Evaluates the graph serialization is the expected one. There is no prescriptive order in the serialization, thus
 // differences are expected in the order of the edges.
 TEST_F(TShapeRoadGenerateDotTest, DotGraphWithoutARouteYieldsTheExpectedGraph) {
-  const std::string kResult(R"(graph {
+  const std::string kExpectedResult(R"(graph {
 1 -- 5 [ label = "9_0" ];
 5 -- 2 [ label = "7_0" ];
 2 -- 5 [ label = "6_0" ];
@@ -130,11 +159,19 @@ TEST_F(TShapeRoadGenerateDotTest, DotGraphWithoutARouteYieldsTheExpectedGraph) {
 0 -- 1 [ label = "0_0" ];
 }
 )");
+  const std::vector<std::string> kExpectedResultInLines = SplitByLines(kExpectedResult);
 
   std::stringstream ss;
-  maliput::utility::GenerateDotStream(graph_, &ss);
+  utility::GenerateDotStream(graph_, &ss);
 
-  ASSERT_EQ(kResult, ss.str());
+  const std::vector<std::string> result = SplitByLines(ss.str());
+  ASSERT_EQ(kExpectedResultInLines.size(), result.size());
+  ASSERT_EQ(kExpectedResultInLines.front(), result.front());
+  ASSERT_EQ(kExpectedResultInLines.back(), result.back());
+  for (size_t i = 1; i < result.size() - 1; ++i) {
+    ASSERT_NE(kExpectedResultInLines.end(),
+              std::find(kExpectedResultInLines.begin() + 1, kExpectedResultInLines.end() - 1, result[i]));
+  }
 }
 
 }  // namespace
