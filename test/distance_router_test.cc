@@ -100,12 +100,17 @@ class TShapeRoadRoutingTest : public ::testing::Test {
   static constexpr double kAngularTolerance{1e-6};
   static constexpr double kScaleLength{1.0};
   //@}
+  static constexpr bool kAllowLaneSwitch{true};
+  static constexpr bool kDontAllowLaneSwitch{!kAllowLaneSwitch};
   static constexpr routing::RoutingConstraints kDefaultRoutingConstraints{};
   static constexpr routing::RoutingConstraints kSmallPhaseCostConstraint{
-      true /* allow_lane_switch */, std::optional<double>{1.} /* max_phase_cost */, std::nullopt /* max_route_cost */
+      kAllowLaneSwitch, std::optional<double>{1.} /* max_phase_cost */, std::nullopt /* max_route_cost */
   };
   static constexpr routing::RoutingConstraints kSmallRouteCostConstraint{
-      true /* allow_lane_switch */, std::nullopt /* max_phase_cost */, std::optional<double>{1.} /* max_route_cost */
+      kAllowLaneSwitch, std::nullopt /* max_phase_cost */, std::optional<double>{1.} /* max_route_cost */
+  };
+  static constexpr routing::RoutingConstraints kDontAllowLaneSwitchRoutingConstraint{
+      kDontAllowLaneSwitch, std::nullopt /* max_phase_cost */, std::nullopt /* max_route_cost */
   };
   const std::string kTShapeRoadFilePath{std::string(kMalidriveResourcesPath) +
                                         std::string("/resources/odr/TShapeRoad.xodr")};
@@ -196,6 +201,41 @@ TEST_F(RoutingInTheSameLaneTest, WithConstrainedRouteCostReturnsEmpty) {
   ASSERT_TRUE(routes.empty());
 }
 
+// Because the start and end positions are on the same Lane, no lane switch is required and thus there is a solution.
+TEST_F(RoutingInTheSameLaneTest, WithConstrainedLaneSwitchReturnsTheLane) {
+  const std::vector<api::LaneSRange> kPhaseLaneSRanges{api::LaneSRange(kLaneId_0_0_m1, api::SRange(1., 10.)),
+                                                       api::LaneSRange(kLaneId_0_0_1, api::SRange(1., 10.))};
+
+  const std::vector<routing::Route> routes = dut_->ComputeRoutes(start_, end_, kDontAllowLaneSwitchRoutingConstraint);
+
+  ASSERT_EQ(1u, routes.size());
+  const routing::Route& route = routes[0];
+  ASSERT_EQ(1, route.size());
+  const routing::Phase& phase = route.Get(0);
+  CheckRoutingPhase(phase, 0, kLinearTolerance, std::vector<api::RoadPosition>{start_},
+                    std::vector<api::RoadPosition>{end_}, kPhaseLaneSRanges);
+}
+
+// Similar to RoutingInTheSameLaneTest, but the end position is in another api::Lane.
+class RoutingInTheSameSegmentTest : public TShapeRoadRoutingTest {
+ public:
+  void SetUp() override {
+    TShapeRoadRoutingTest::SetUp();
+    start_ = api::RoadPosition(lane_0_0_1_, api::LanePosition(1., 0., 0.));
+    end_ = api::RoadPosition(lane_0_0_m1_, api::LanePosition(10., 0., 0.));
+  }
+
+  api::RoadPosition start_;
+  api::RoadPosition end_;
+};
+
+// The lane switch constraint with start and end positions in different api::Lanes produces no possible routes.
+TEST_F(RoutingInTheSameSegmentTest, WithConstrainedLaneSwitchInDifferentLaneReturnsEmpty) {
+  const std::vector<routing::Route> routes = dut_->ComputeRoutes(start_, end_, kDontAllowLaneSwitchRoutingConstraint);
+
+  ASSERT_TRUE(routes.empty());
+}
+
 // Defines the test cases for the TShapeRoad where the start and end positions are on the extremes of the
 // three roads aligned in a straight line.
 class DriveBackwardStraightOverMultipleLanesTest : public TShapeRoadRoutingTest {
@@ -277,6 +317,27 @@ TEST_F(DriveBackwardStraightOverMultipleLanesTest, WithDefaultConstraintsReturns
                       std::vector<api::RoadPosition>{route_1_phase_1_end_}, kRoute1Phase1LaneSRanges);
     CheckRoutingPhase(phase_2, 2, kLinearTolerance, std::vector<api::RoadPosition>{route_1_phase_2_start_},
                       std::vector<api::RoadPosition>{route_1_phase_2_end_}, kRoute1Phase2LaneSRanges);
+  }
+}
+
+// The lane switch constraint limits the result to just one route which provides a straight sequence of api::LaneSRanges
+// from the start to the end.
+TEST_F(DriveBackwardStraightOverMultipleLanesTest, WithConstrainedLaneSwitchReturnsOneRoute) {
+  const std::vector<routing::Route> routes = dut_->ComputeRoutes(start_, end_, kDontAllowLaneSwitchRoutingConstraint);
+
+  ASSERT_EQ(1u, routes.size());
+  {
+    const routing::Route& route = routes[0];
+    ASSERT_EQ(3, route.size());
+    const routing::Phase& phase_0 = route.Get(0);
+    const routing::Phase& phase_1 = route.Get(1);
+    const routing::Phase& phase_2 = route.Get(2);
+    CheckRoutingPhase(phase_0, 0, kLinearTolerance, std::vector<api::RoadPosition>{route_0_phase_0_start_},
+                      std::vector<api::RoadPosition>{route_0_phase_0_end_}, kRoute0Phase0LaneSRanges);
+    CheckRoutingPhase(phase_1, 1, kLinearTolerance, std::vector<api::RoadPosition>{route_0_phase_1_start_},
+                      std::vector<api::RoadPosition>{route_0_phase_1_end_}, kRoute0Phase1LaneSRanges);
+    CheckRoutingPhase(phase_2, 2, kLinearTolerance, std::vector<api::RoadPosition>{route_0_phase_2_start_},
+                      std::vector<api::RoadPosition>{route_0_phase_2_end_}, kRoute0Phase2LaneSRanges);
   }
 }
 
@@ -365,6 +426,27 @@ TEST_F(DriveForwardStraightOverMultipleLanesTest, WithDefaultConstraintsReturnsR
   }
   {
     const routing::Route& route = routes[1];
+    ASSERT_EQ(3, route.size());
+    const routing::Phase& phase_0 = route.Get(0);
+    const routing::Phase& phase_1 = route.Get(1);
+    const routing::Phase& phase_2 = route.Get(2);
+    CheckRoutingPhase(phase_0, 0, kLinearTolerance, std::vector<api::RoadPosition>{route_1_phase_0_start_},
+                      std::vector<api::RoadPosition>{route_1_phase_0_end_}, kRoute1Phase0LaneSRanges);
+    CheckRoutingPhase(phase_1, 1, kLinearTolerance, std::vector<api::RoadPosition>{route_1_phase_1_start_},
+                      std::vector<api::RoadPosition>{route_1_phase_1_end_}, kRoute1Phase1LaneSRanges);
+    CheckRoutingPhase(phase_2, 2, kLinearTolerance, std::vector<api::RoadPosition>{route_1_phase_2_start_},
+                      std::vector<api::RoadPosition>{route_1_phase_2_end_}, kRoute1Phase2LaneSRanges);
+  }
+}
+
+// The lane switch constraint limits the result to just one route which provides a straight sequence of api::LaneSRanges
+// from the start to the end.
+TEST_F(DriveForwardStraightOverMultipleLanesTest, WithConstrainedLaneSwitchReturnsOneRoute) {
+  const std::vector<routing::Route> routes = dut_->ComputeRoutes(start_, end_, kDontAllowLaneSwitchRoutingConstraint);
+
+  ASSERT_EQ(1u, routes.size());
+  {
+    const routing::Route& route = routes[0];
     ASSERT_EQ(3, route.size());
     const routing::Phase& phase_0 = route.Get(0);
     const routing::Phase& phase_1 = route.Get(1);
