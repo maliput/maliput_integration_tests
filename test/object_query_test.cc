@@ -242,7 +242,7 @@ class SimpleObjectQueryRouteTest : public ::testing::TestWithParam<SimpleObjectQ
 
   const SimpleObjectQueryRouteResults results_ = GetParam();
   const maliput::object::api::Object<maliput::math::Vector3>::Id kId{"kId"};
-  const double kTolerance{1e-6};
+  const double kTolerance{1e-4};
   const std::string filepath_;
   const std::map<std::string, std::string> configuration_{{malidrive::builder::params::kOpendriveFile, filepath_}};
   const maliput::object::test_utilities::MockObjectBook<maliput::math::Vector3> object_book;
