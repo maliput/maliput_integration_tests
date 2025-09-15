@@ -269,7 +269,8 @@ class TestLoading2x2IntersectionRules : public ::testing::Test {
     EXPECT_NE(rulebook, nullptr);
     // Check that discrete value rule with a Vehicle Stop In Zone Behaviour Rule Type was created.
     const DiscreteValueRule vehicle_stop_in_zone_discrete_rule =
-        rulebook->GetDiscreteValueRule(GetRuleIdFrom(VehicleStopInZoneBehaviorRuleTypeId(), right_of_way_rule.id()));
+        rulebook->GetDiscreteValueRule(GetRuleIdFrom(VehicleStopInZoneBehaviorRuleTypeId(), right_of_way_rule.id()))
+            .value();
     // Compare values.
     EXPECT_DOUBLE_EQ(vehicle_stop_in_zone_discrete_rule.zone().length(), right_of_way_rule.zone().length());
     EXPECT_EQ(vehicle_stop_in_zone_discrete_rule.states().size(), 1u);
@@ -283,7 +284,7 @@ class TestLoading2x2IntersectionRules : public ::testing::Test {
 
     // Check that discrete value rule from the right of way rule type was created.
     const DiscreteValueRule right_of_way_discrete_rule =
-        rulebook->GetDiscreteValueRule(GetRuleIdFrom(RightOfWayRuleTypeId(), right_of_way_rule.id()));
+        rulebook->GetDiscreteValueRule(GetRuleIdFrom(RightOfWayRuleTypeId(), right_of_way_rule.id())).value();
 
     EXPECT_DOUBLE_EQ(right_of_way_discrete_rule.zone().length(), right_of_way_rule.zone().length());
     // Check the matching between right of way rules and discrete value rules.
