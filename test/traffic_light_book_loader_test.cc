@@ -36,6 +36,7 @@
 #include <vector>
 
 #include <gtest/gtest.h>
+#include <maliput/api/lane.h>
 #include <maliput/api/rules/compare.h>
 #include <maliput/api/rules/traffic_light_book.h>
 #include <maliput/api/rules/traffic_lights.h>
@@ -87,9 +88,10 @@ class TestLoading2x2IntersectionTrafficLightbook : public ::testing::Test {
         BulbType::kArrow, 3.14, std::vector<BulbState>({BulbState::kOff, BulbState::kBlinking}), Bulb::BoundingBox()));
     bulb_groups.push_back(std::make_unique<BulbGroup>(BulbGroup::Id("SouthFacingBulbs"), InertialPosition(0, 0, 0),
                                                       kRotation, std::move(bulbs)));
-    south_facing_ = std::make_unique<const TrafficLight>(
-        TrafficLight::Id("SouthFacing"), InertialPosition(1.875, 9.375, 6.0579),
-        Rotation::FromQuat(math::Quaternion(0.707107, 0, 0, -0.707107)), std::move(bulb_groups));
+    south_facing_ =
+        std::make_unique<const TrafficLight>(TrafficLight::Id("SouthFacing"), InertialPosition(1.875, 9.375, 6.0579),
+                                             Rotation::FromQuat(math::Quaternion(0.707107, 0, 0, -0.707107)),
+                                             std::move(bulb_groups), std::vector<maliput::api::LaneId>());
   }
 
   const std::string filepath_;
